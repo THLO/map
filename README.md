@@ -57,11 +57,11 @@ Detailed information about the files in the current user's `Desktop` folder is d
 Note that this command is equivalent to `ls -la ~/Desktop`.
 
 ```
-'map "_ /new/path/_" /old/path/
+map "_ /new/path/_" /old/path/
 ```
-Move all the files under '/old/path/' to '/new/path/'.
-Note that 'map' is smart enough to drop the path when '_' is used as part of a path, i.e.,
-'/new/path/_' is equivalent to '/new/path/-#' (concatenation of the filename and the extension).
+Move all the files under `/old/path/` to `/new/path/`.
+Note that `map` is smart enough to drop the path when `_` is used as part of a path, i.e.,
+`/new/path/_` is equivalent `/new/path/-#` (concatenation of the file name and the extension).
 
 
 ```
@@ -81,7 +81,7 @@ map -n 3 "mv _ &-\-%#" ~/Documents/*.txt
 ```
 Add a counter with three digits to the file names of all `txt` files, i.e,
 `a.txt`, `b.txt` are renamed to `a-000.txt`, `b-001.txt` etc.
-Note that '\' is the escape character for all placeholders, i.e., in order to write a regular underscore ('_'), write '\_'. The same principle applies to '-', '&', '#', and '%'.
+Note that `\` is the escape character for all placeholders, i.e., in order to write a regular underscore (`_`), write `\_`. The same principle applies to `-`, `&`, `#`, and `%`.
 
 ## Important Notes
 
