@@ -32,7 +32,7 @@ For example, if the current file is `path/to/file/filename.ext` and this is the 
 `map` also provides several options:
 
 * `-h, --help`:         show the help message and exit
-* `-h, --count-from`:   set the internal counter to the provided start value
+* `-c, --count-from`:   set the internal counter to the provided start value
 * `-d, --directories`:  apply the command to directories instead of files.
 * `-i, --ignore-errors`: continue to execute commands even when a command has failed.
 * `-l, --list`:          list all commands without executing them.
@@ -57,10 +57,19 @@ Detailed information about the files in the current user's `Desktop` folder is d
 Note that this command is equivalent to `ls -la ~/Desktop`.
 
 ```
+'map "_ /new/path/_" /old/path/
+```
+Move all the files under '/old/path/' to '/new/path/'.
+Note that 'map' is smart enough to drop the path when '_' is used as part of a path, i.e.,
+'/new/path/_' is equivalent to '/new/path/-#' (concatenation of the filename and the extension).
+
+
+```
 map -r -x jpg,jpeg "jpegoptim _" ~/Pictures
 ```
 Optimize all JPEG pictures found under `~/Pictures` including subdirectories
 using [jpegoptim](https://github.com/tjko/jpegoptim).
+
 
 ```
 map -rd "mv _ &/.." ~/Documents
