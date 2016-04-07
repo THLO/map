@@ -1,0 +1,44 @@
+# Currently, it is tested whether the correct commands are built
+# for various input paths.
+# The parameter -l is used to generate the list of commands that
+# would be executed.
+
+# Global parameters:
+NUM_TESTS=14
+
+# The basic operation with one or more directories is tested: 
+echo "Run basic operation tests..."
+../map.py -l _ data/ > output/test1
+../map.py -l _ data/* > output/test2
+../map.py -l _ data/*txt > output/test3
+../map.py -l _ data/subfolder/*abc data/anothersubfolder/*txt > output/test4
+../map.py -l _ data/ data/ > output/test5
+../map.py -l _ data/* data/* > output/test6
+
+# The same type of operation with recursion is tested:
+echo "Run basic operation tests with recursion..."
+../map.py -lr _ data/*txt > output/test7
+../map.py -lr _ data/*mat > output/test8
+../map.py -lr _ data/*txt data/anothersubfolder data/subfolder/*abc > output/test9
+../map.py -lr _ data/*jpg data/*txt data/*abc > output/test10
+
+# Operations with folders instead of files are tested:
+../map.py -ld "mv _ _/../.." data/ > output/test11
+../map.py -ldr "mv _ _/../.." data/ > output/test12
+../map.py -ld "mv _ _\_%" data/ > output/test13
+../map.py -ldr "mv _ _\_%" data/ > output/test14
+
+echo "All tests have been executed."
+
+# Compare results against expected results:
+for i in `seq 1 $NUM_TESTS`; do
+	result=`cmp --silent output/test$i output/correct_result_test$i && echo "1" || echo "0"`
+	if [ "$result" -eq 0 ]
+	then
+		echo "Test $i failed."
+		echo "Expected output:"
+		cat output/correct_result_test$i
+		echo "Test output:"
+		cat output/test$i
+	fi
+done

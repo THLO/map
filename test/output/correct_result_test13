@@ -1,0 +1,2 @@
+mv data/subfolder data/subfolder_0
+mv data/anothersubfolder data/anothersubfolder_1
