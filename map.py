@@ -70,18 +70,29 @@ def createList():
         resultList = args.path
     return list(set(resultList))
 
+def matchesExtension(input, extensions):
+    extensionList = extensions.split(',')
+    extensionListWithDot = []
+    for ext in extensionList:
+        next = ext if ext.startswith('.') else '.'+ext
+        extensionListWithDot.append(next)
+    print extensionListWithDot
+    return os.path.splitext(input)[1] in extensionListWithDot
+
 def findFiles():
-    list = []
+    fileList = []
     if args.recursive:
-        list = createListRecursively()
+        fileList = createListRecursively()
     else:
-        list = createList()
+        fileList = createList()
     if args.directories:
-        list = [element for element in list if os.path.isdir(element)]
+        fileList = [element for element in fileList if os.path.isdir(element)]
         return sorted(list,reverse=True)
     else:
-        list = [element for element in list if os.path.isfile(element)]
-        return sorted(list)
+        fileList = [element for element in fileList if os.path.isfile(element)]
+	if args.extensions != None:
+            fileList = [element for element in fileList if matchesExtension(element,args.extensions)]
+        return sorted(fileList)
 
 
 def replaceInCommand(command, pattern, replacement, replacementAtBeginning):
@@ -130,7 +141,7 @@ def buildCommand(fileName,count):
 
 def buildCommands(files):
     commands = []
-    count = 0
+    count = args.count_from
     for fileName in files:
         commands.append(buildCommand(fileName,count))
         count = count+1
@@ -173,6 +184,12 @@ execfile('version.py')
 os.chdir(old_dir)
 version = __version__
 
+def checkNegative(value):
+    ivalue = int(value)
+    if ivalue < 0:
+         raise argparse.ArgumentTypeError("%s is invalid because negative integers are not allowed." % value)
+    return ivalue
+
 parser = MapArgumentParser(description="The given command is applied to all \
 files/directories under the provided path.\n\
 The command must be set in quotation marks.\n\n\
@@ -185,17 +202,17 @@ placeholders:\n  \
 incremented after each command.\n\n\
 examples:\n  map \"mv _ &-%#\" /path/to/folder: A counter is added to all file names.\n" \
 "  map -r \"mv _ &/..\" /path/to/folder: Each file is moved to its respective parent directory.",formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument("-c", "--count-from", type=int,default=0,help="set the internal counter to the provided start value. [NOT YET IMPLEMENTED]")
+parser.add_argument("-c", "--count-from", type=checkNegative,default=0,help="set the internal counter to the provided start value.")
 parser.add_argument("-d", "--directories", action="store_true",help="apply the command to directories instead of files.")
 parser.add_argument("-i", "--ignore-errors", action="store_true", help="continue to execute commands even when a command has failed.")
 parser.add_argument("-l", "--list", action="store_true", help="list all commands without executing them.")
-parser.add_argument("-n", "--number-length", type=int,default=0,help="format the counter that is used with \
+parser.add_argument("-n", "--number-length", type=checkNegative,default=0,help="format the counter that is used with \
 "+placeholderCounterHelpVersion+". The argument is the length in terms of number of digits of the counter (with leading zeros).")
 parser.add_argument("-r", "--recursive", action="store_true",help="search for files recursively under the provided path.")
 parser.add_argument("-v", "--verbose", action="store_true", help="display detailed information about the process.")
 parser.add_argument("-V",'--version', action='version', version='map '+version+'\n'+version_text,help="display information about the installed version.")
 parser.add_argument("-x", "--extensions", help="apply the command to all files with any of the listed extensions. The extensions must be provided in a comma-separated list. By default, the command is \
-applied to all files under the provided path. [NOT YET IMPLEMENTED]")
+applied to all files under the provided path.")
 
 parser.add_argument("command", help="The command that is applied to all matching files/directories.")
 parser.add_argument("path",nargs='*', help="The (top-level) path where matching files are sought.")
