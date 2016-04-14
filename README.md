@@ -32,17 +32,17 @@ For example, if the current file is `path/to/file/filename.ext` and this is the 
 `map` also provides several options:
 
 * `-h, --help`:         show the help message and exit
-* `-c, --count-from`:   set the internal counter to the provided start value
+* `-c, --count-from VALUE`:   set the internal counter to the provided start value
 * `-d, --directories`:  apply the command to directories instead of files.
 * `-i, --ignore-errors`: continue to execute commands even when a command has failed.
 * `-l, --list`:          list all commands without executing them.
-* `n NUMBER_LENGTH, --number-length NUMBER_LENGTH`:
+* `n LENGTH, --number-length LENGTH`:
                         format the counter that is used with `$`. The argument is the length
                         in terms of number of digits (with leading zeros).
 * `-r, --recursive`:    search for files recursively under the provided path.
 * `-v, --verbose`:      display detailed information about the process.
 * `-V, --version`:      display information about the installed version.
-* `-x EXTENSIONS, --extensions EXTENSIONS`:
+* `-x EXT, --extensions EXT`:
                         apply the command to all files with any of the listed extensions.
                         The extensions must be provided in a comma-separated list.
                         By default, the command is applied to all files under the provided path.
@@ -84,6 +84,17 @@ Add a counter with three digits to the file names of all `txt` files, i.e,
 Note that `\` is the escape character for all placeholders, i.e., in order to write a regular underscore (`_`), write `\_`. The same principle applies to `-`, `&`, `#`, and `%`.
 
 ## Important Notes
+
+Note that `map [command] /path/to/folder/*.txt` and `map -x txt [command] /path/to/folder/` are equivalent.
+The `-x` option is useful when multiple extensions should be considered, e.g., `map -x jpg,jpeg,gif,png [command] /path/to/folder/`.
+Further note that a command such as `map -x jpg [command] /path/to/folder/*.jpeg` returns
+
+```
+No input for the map process found.
+```
+
+The reason is that only files with the extension `jpeg` are considered under the provided path.
+It will then filter out all files that do not have the extension `jpg`, resulting in an empty input.
 
 The commands `map [command] /path/to/folder` and `map [command] /path/to/folder/*` provide the same output.
 The same is true when using the option `-r, --recursive`.
