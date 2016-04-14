@@ -11,21 +11,7 @@ More information is available at https://github.com/THLO/map.
 
 import os,sys,argparse,subprocess,re
 from MapArgumentParser import MapArgumentParser
-
-"""
-The following symbols have special meanings in a map command:
-"""
-placeholder = '_'
-placeholderFileName = '-'
-placeholderPath = '&'
-placeholderExtension = '#'
-placeholderCounter = '%'
-"""
-Since any single '%' character is interpreted as the start of an
-argument specifier, we need '%%' for the help text:
-"""
-placeholderCounterHelpVersion = '%%'
-escape_char = '\\'
+import MapConstants
 
 version_text = 'Copyright (C) 2016 Thomas Locher\n \
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n \
@@ -76,7 +62,6 @@ def matchesExtension(input, extensions):
     for ext in extensionList:
         next = ext if ext.startswith('.') else '.'+ext
         extensionListWithDot.append(next)
-    print extensionListWithDot
     return os.path.splitext(input)[1] in extensionListWithDot
 
 def findFiles():
@@ -101,7 +86,7 @@ def replaceInCommand(command, pattern, replacement, replacementAtBeginning):
     for index in indices:
         if index == 0:
             commandAsList[index] = replacementAtBeginning
-        elif commandAsList[index-1] != escape_char:
+        elif commandAsList[index-1] != MapConstants.escape_char:
             commandAsList[index] = replacement
         else:
             commandAsList[index-1] = ''
@@ -116,19 +101,19 @@ def buildPart(commandPart,fileName,count):
     plainFileName = os.path.splitext(fileNameWithoutPath)[0].replace(' ','\\ ')
     fileExtension = os.path.splitext(fileNameWithoutPath)[1]
     # Replace the file placeholder character with the file:
-    commandPart = replaceInCommand(commandPart,placeholder,fileNameWithoutPath,fileNameWithPath)
+    commandPart = replaceInCommand(commandPart,MapConstants.placeholder,fileNameWithoutPath,fileNameWithPath)
     # Replace the path placeholder with the path:
-    commandPart = replaceInCommand(commandPart,placeholderPath,filePath,filePath)
+    commandPart = replaceInCommand(commandPart,MapConstants.placeholderPath,filePath,filePath)
     # Replace the plain file placeholder with the plain file:
-    commandPart = replaceInCommand(commandPart,placeholderFileName,plainFileName,plainFileName)
+    commandPart = replaceInCommand(commandPart,MapConstants.placeholderFileName,plainFileName,plainFileName)
     # Replace the extension placeholder with the extension:
-    commandPart = replaceInCommand(commandPart,placeholderExtension,fileExtension,fileExtension)
+    commandPart = replaceInCommand(commandPart,MapConstants.placeholderExtension,fileExtension,fileExtension)
     # Replace the placeholder for the counter with the actual count:
     if args.number_length == 0:
         replacementString = str(count)
     else:
         replacementString = ('{0:0'+str(args.number_length)+'d}').format(count)
-    commandPart = replaceInCommand(commandPart,placeholderCounter,replacementString,replacementString)
+    commandPart = replaceInCommand(commandPart,MapConstants.placeholderCounter,replacementString,replacementString)
     
     return commandPart
 
@@ -178,57 +163,28 @@ def runCommands(commands):
             else:
                 print str(errorCounter) + ' error occurred during the process.'
 
-old_dir = os.getcwd()
-os.chdir(os.path.dirname(__file__))
-execfile('version.py')
-os.chdir(old_dir)
-version = __version__
+# ***** This code is executed when running map.py: *****
 
-def checkNegative(value):
-    ivalue = int(value)
-    if ivalue < 0:
-         raise argparse.ArgumentTypeError("%s is invalid because negative integers are not allowed." % value)
-    return ivalue
+# The argument parser is instantiated:
+parser = MapArgumentParser()
 
-parser = MapArgumentParser(description="The given command is applied to all \
-files/directories under the provided path.\n\
-The command must be set in quotation marks.\n\n\
-placeholders:\n  \
-"+placeholder+" is used as the placeholder for the current matching file including the full path.\n  \
-"+placeholderFileName+" is used as the placeholder for the current file's name without its path or extension.\n  \
-"+placeholderPath+" is used as the placeholder for the current file's path.\n  \
-"+placeholderExtension+" is used as the placeholder for the current file's extension including the dot.\n  \
-"+placeholderCounterHelpVersion+" is used to refer to an internal counter,\
-incremented after each command.\n\n\
-examples:\n  map \"mv _ &-%#\" /path/to/folder: A counter is added to all file names.\n" \
-"  map -r \"mv _ &/..\" /path/to/folder: Each file is moved to its respective parent directory.",formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument("-c", "--count-from", type=checkNegative,default=0,help="set the internal counter to the provided start value.")
-parser.add_argument("-d", "--directories", action="store_true",help="apply the command to directories instead of files.")
-parser.add_argument("-i", "--ignore-errors", action="store_true", help="continue to execute commands even when a command has failed.")
-parser.add_argument("-l", "--list", action="store_true", help="list all commands without executing them.")
-parser.add_argument("-n", "--number-length", type=checkNegative,default=0,help="format the counter that is used with \
-"+placeholderCounterHelpVersion+". The argument is the length in terms of number of digits of the counter (with leading zeros).")
-parser.add_argument("-r", "--recursive", action="store_true",help="search for files recursively under the provided path.")
-parser.add_argument("-v", "--verbose", action="store_true", help="display detailed information about the process.")
-parser.add_argument("-V",'--version', action='version', version='map '+version+'\n'+version_text,help="display information about the installed version.")
-parser.add_argument("-x", "--extensions", help="apply the command to all files with any of the listed extensions. The extensions must be provided in a comma-separated list. By default, the command is \
-applied to all files under the provided path.")
-
-parser.add_argument("command", help="The command that is applied to all matching files/directories.")
-parser.add_argument("path",nargs='*', help="The (top-level) path where matching files are sought.")
-
+# The arguments are parsed and returned:
 args = parser.parse_args()
 
+# The target files (or folders) are collected for the map job:
 if args.verbose:
     print 'Collecting input for the map process...'
 files = findFiles()
 
+# If there are no files (or folders), there is nothing to do:
 if len(files) == 0:
     sys.stdout.write('No input for the map process found.\n')
     sys.exit(1)
 
+# If there is at least one file (or folder), the commands are built:
 commands = buildCommands(files)
 
+# Finally, the commands are executed sequentially:
 if args.verbose:
     print 'Executing commands...'
 runCommands(commands)
