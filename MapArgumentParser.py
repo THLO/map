@@ -29,8 +29,11 @@ examples:\n  map \"mv _ &-%#\" /path/to/folder: A counter is added to all file n
 	version = info['__version__']
         versionText = info['__version_text__']
         # Add all arguments:
+	# Get a group for mutually exclusive options:
+	group = self.add_mutually_exclusive_group()
         self.add_argument("-c", "--count-from", type=checkNegative,default=0,help="set the internal counter to the provided start value.")
-        self.add_argument("-d", "--directories", action="store_true",help="apply the command to directories instead of files.")
+        # It is not allowed to use the extension option (-x) with the directories option (-d)
+        group.add_argument("-d", "--directories", action="store_true",help="apply the command to directories instead of files.")
         self.add_argument("-i", "--ignore-errors", action="store_true", help="continue to execute commands even when a command has failed.")
         self.add_argument("-l", "--list", action="store_true", help="list all commands without executing them.")
         self.add_argument("-n", "--number-length", type=checkNegative,default=0,help="format the counter that is used with \
@@ -38,7 +41,7 @@ examples:\n  map \"mv _ &-%#\" /path/to/folder: A counter is added to all file n
         self.add_argument("-r", "--recursive", action="store_true",help="search for files recursively under the provided path.")
         self.add_argument("-v", "--verbose", action="store_true", help="display detailed information about the process.")
         self.add_argument("-V",'--version', action='version', version='map '+version+'\n'+versionText,help="display information about the installed version.")
-        self.add_argument("-x", "--extensions", help="apply the command to all files with any of the listed extensions. The extensions must be provided in a comma-separated list. By default, the command is \
+        group.add_argument("-x", "--extensions", help="apply the command to all files with any of the listed extensions. The extensions must be provided in a comma-separated list. By default, the command is \
 applied to all files under the provided path.")
         self.add_argument("command", help="The command that is applied to all matching files/directories.")
         self.add_argument("path",nargs='*', help="The (top-level) path where matching files are sought.")
@@ -48,9 +51,13 @@ applied to all files under the provided path.")
 	return super(MapArgumentParser,self).format_help().replace('.py','').replace('%%','%').replace('COUNT_FROM','VALUE').replace('NUMBER_LENGTH','LENGTH').replace('EXTENSIONS','EXT')
 
 def checkNegative(value):
-    ivalue = int(value)
-    if ivalue < 0:
-         raise argparse.ArgumentTypeError("%s is invalid because negative integers are not allowed." % value)
+    errorMessage = "%s is invalid because only non-negative integers are allowed." % value
+    try: 
+        intvalue = int(value)
+        if intvalue < 0:
+            raise argparse.ArgumentTypeError(errorMessage)
+    except ValueError:
+        raise argparse.ArgumentTypeError(errorMessage)
     return ivalue
 
 def loadVersionInfo():
