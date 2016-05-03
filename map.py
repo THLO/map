@@ -123,10 +123,31 @@ class MapInputHandler(object):
             return sorted(fileList)
 
 class MapExecutor(object):
+    """
+    MapExecutor builds the command for each file (or directory) in a list.
+    It further executes the set of commands.
+    The commands are built by calling
+
+        buildCommands(files)
+    
+    and the resulting commands are executed in succession by calling
+
+        runCommands(commands)
+    """
 
     def replaceInCommand(self,command, pattern, replacement, replacementAtBeginning):
+        """
+        This is in internal function that replaces a certain 'pattern' in the
+        provided command with a 'replacement'.
+        A different replacement can be specified when the pattern occurs right
+        at the beginning of the command.
+        """
+        # Turn the command into a list:
         commandAsList = list(command)
+        # Get the indices of the pattern in the list:
         indices = [index.start() for index in re.finditer(pattern, command)]
+        # Replace at the indices, unless the preceding character is the
+        # escape character:
         for index in indices:
             if index == 0:
                 commandAsList[index] = replacementAtBeginning
@@ -134,15 +155,25 @@ class MapExecutor(object):
                 commandAsList[index] = replacement
             else:
                 commandAsList[index-1] = ''
+        # Put the pieces of the new command together:
         newCommand = ''.join(commandAsList)
         # Remove superfluous slashes and return:
         return newCommand.replace("//","/")
     
     def buildPart(self,commandPart,fileName,count):
+        """
+        This is in internal function that builds a part of the command,
+        see buildCommand().
+        """
+        # Escape spaces in file paths:
         fileNameWithPath = fileName.replace(' ','\\ ')
+        # Get the path to the file:
         filePath = os.path.split(fileNameWithPath)[0]+'/'
+        # Get the file name without the path:
         fileNameWithoutPath = os.path.basename(fileName)
+        # Get the file name without the path and without the extension:
         plainFileName = os.path.splitext(fileNameWithoutPath)[0].replace(' ','\\ ')
+        # Get the extension:
         fileExtension = os.path.splitext(fileNameWithoutPath)[1]
         # Replace the file placeholder character with the file:
         commandPart = self.replaceInCommand(commandPart,MapConstants.placeholder,fileNameWithoutPath,fileNameWithPath)
@@ -161,25 +192,41 @@ class MapExecutor(object):
         return commandPart
 
     def buildCommand(self,fileName,count):
+        """
+        This is an internal function, building the command for a particular file.
+        """
+        # The command is split into 'parts', which are separated by blank spaces:
         commandParts = args.command.split(' ')
         processedParts = []
+        # Each part of the command is processed separately:
         for part in commandParts:
             processedParts.append(self.buildPart(part,fileName,count))
+        # The parts are put together at the end and the new command is returned:
         return ' '.join(processedParts)
 
     def buildCommands(self,files):
+        """
+        Given a list of (input) files, buildCommands builds all the commands.
+        This is one of the two key methods of MapExecutor.
+        """
         commands = []
         count = args.count_from
+        # For each file, a command is created:
         for fileName in files:
             commands.append(self.buildCommand(fileName,count))
             count = count+1
         return commands
 
     def runCommands(self,commands):
+        """
+        Given a list of commands, runCommands executes them.
+        This is one of the two key methods of MapExecutor.
+        """
         errorCounter = 0
         if args.list:
             print '\n'.join(commands)
         else:
+            # Each command is executed sequentially:
             for command in commands:
                 process = subprocess.Popen(command, stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
                 stream = process.communicate()
