@@ -58,7 +58,7 @@ def checkNegative(value):
             raise argparse.ArgumentTypeError(errorMessage)
     except ValueError:
         raise argparse.ArgumentTypeError(errorMessage)
-    return ivalue
+    return intvalue
 
 def loadVersionInfo():
     directory = os.path.dirname(__file__) +"/"

@@ -114,7 +114,7 @@ class MapInputHandler(object):
             # Processing the parent folder first may not work because the command may remove
             # or rename the folder, which would affect the subfolders.
             fileList = [element for element in fileList if os.path.isdir(element)]
-            return sorted(list,reverse=True)
+            return sorted(fileList,reverse=True)
         else:
             # The files in the list are sorted in lexicographical order:
             fileList = [element for element in fileList if os.path.isfile(element)]
