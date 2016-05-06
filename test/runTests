@@ -5,42 +5,43 @@
 
 # Global parameters:
 NUM_TESTS=21
+NUM_ERRORS=0
 
 # The basic operation with one or more directories is tested: 
 echo "Running basic operation tests..."
-../map.py -l _ data/ > output/test1
-../map.py -l _ data/* > output/test2
-../map.py -l _ data/*txt > output/test3
-../map.py -l _ data/subfolder/*abc data/anothersubfolder/*txt > output/test4
-../map.py -l _ data/ data/ > output/test5
-../map.py -l _ data/* data/* > output/test6
+../mapper.py -l _ data/ > output/test1
+../mapper.py -l _ data/* > output/test2
+../mapper.py -l _ data/*txt > output/test3
+../mapper.py -l _ data/subfolder/*abc data/anothersubfolder/*txt > output/test4
+../mapper.py -l _ data/ data/ > output/test5
+../mapper.py -l _ data/* data/* > output/test6
 
 # The same type of operation with recursion is tested:
 echo "Running basic operation tests with recursion..."
-../map.py -lr _ data/*txt > output/test7
-../map.py -lr _ data/*mat > output/test8
-../map.py -lr _ data/*txt data/anothersubfolder data/subfolder/*abc > output/test9
-../map.py -lr _ data/*jpg data/*txt data/*abc > output/test10
+../mapper.py -lr _ data/*txt > output/test7
+../mapper.py -lr _ data/*mat > output/test8
+../mapper.py -lr _ data/*txt data/anothersubfolder data/subfolder/*abc > output/test9
+../mapper.py -lr _ data/*jpg data/*txt data/*abc > output/test10
 
 # Operations with folders instead of files are tested:
 echo "Running tests with folders..."
-../map.py -ld "mv _ _/../.." data/ > output/test11
-../map.py -ldr "mv _ _/../.." data/ > output/test12
-../map.py -ld "mv _ _\_%" data/ > output/test13
-../map.py -ldr "mv _ _\_%" data/ > output/test14
+../mapper.py -ld "mv _ _/../.." data/ > output/test11
+../mapper.py -ldr "mv _ _/../.." data/ > output/test12
+../mapper.py -ld "mv _ _\_%" data/ > output/test13
+../mapper.py -ldr "mv _ _\_%" data/ > output/test14
 
 # The different placeholders are tested:
 echo "Running tests with placeholders..."
-../map.py -l "mv _ &-\-%#" data/ > output/test15
-../map.py -l "mv _ ~/_" data/ > output/test16
+../mapper.py -l "mv _ &-\-%#" data/ > output/test15
+../mapper.py -l "mv _ ~/_" data/ > output/test16
 
 # The different options are tested:
 echo "Running tests with different options..."
-../map.py -lr -c 10 -n 2  "mv _ &-\-%#" data/ > output/test17
-../map.py -lr -c 10 -n 2 -x abc "mv _ &-\-%#" data/ > output/test18
-../map.py -lr -c 10 -n 2 -x abc "mv _ &-\-%#" data/*txt > output/test19
-../map.py -lr -c 10 -n 2 -x abc,txt "mv _ &-\-%#" data/*txt > output/test20
-../map.py -lr -c 10 -n 2 -x abc,txt "mv _ &-\-%#" data/ > output/test21
+../mapper.py -lr -c 10 -n 2  "mv _ &-\-%#" data/ > output/test17
+../mapper.py -lr -c 10 -n 2 -x abc "mv _ &-\-%#" data/ > output/test18
+../mapper.py -lr -c 10 -n 2 -x abc "mv _ &-\-%#" data/*txt > output/test19
+../mapper.py -lr -c 10 -n 2 -x abc,txt "mv _ &-\-%#" data/*txt > output/test20
+../mapper.py -lr -c 10 -n 2 -x abc,txt "mv _ &-\-%#" data/ > output/test21
 
 echo "All tests have been executed."
 
@@ -51,12 +52,21 @@ for i in `seq 1 $NUM_TESTS`; do
 	result=`cmp --silent output/test$i output/correct_result_test$i && echo "1" || echo "0"`
 	if [ "$result" -eq 0 ]
 	then
-		echo "Test $i failed."
+		echo "**********************"
+		echo "*** Test $i failed ***"
+		echo "**********************"
 		echo "Expected output:"
 		cat output/correct_result_test$i
 		echo "Test output:"
 		cat output/test$i
+		NUM_ERRORS=$((NUM_ERRORS+1))
 	fi
 done
 
 echo "Testing complete."
+if [ "$NUM_ERRORS" -eq 1 ]
+then
+	echo "There was $NUM_ERRORS error."
+else
+	echo "There were $NUM_ERRORS errors."
+fi
