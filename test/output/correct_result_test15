@@ -1,5 +1,5 @@
-mv data/1.txt data/1-0.txt
-mv data/2.txt data/2-1.txt
-mv data/3.abc data/3-2.abc
-mv data/_-##%.txt data/_-##%-3.txt
-mv data/_-.txt data/_--4.txt
+mv data/1.txt data/-\-0.txt
+mv data/2.txt data/-\-1.txt
+mv data/3.abc data/-\-2.abc
+mv data/\_-\#\ \#\%.txt data/-\-3.txt
+mv data/\_\:.txt data/-\-4.txt
