@@ -255,30 +255,31 @@ class MapExecutor(object):
 
 # ***** This code is executed when running map.py: *****
 
-# The argument parser is instantiated:
-parser = MapArgumentParser()
+if __name__ == "__main__":
+    # The argument parser is instantiated:
+    parser = MapArgumentParser()
 
-# The arguments are parsed and returned:
-args = parser.parse_args()
+    # The arguments are parsed and returned:
+    args = parser.parse_args()
 
-# The target files (or folders) are collected for the map job:
-if args.verbose:
-    print 'Collecting input for the map process...'
-inputHandler = MapInputHandler()
-files = inputHandler.getFiles(args)
+    # The target files (or folders) are collected for the map job:
+    if args.verbose:
+        print 'Collecting input for the map process...'
+    inputHandler = MapInputHandler()
+    files = inputHandler.getFiles(args)
 
-# If there are no files (or folders), there is nothing to do:
-if len(files) == 0:
-    sys.stdout.write('No input for the map process found.\n')
-    sys.exit(1)
+    # If there are no files (or folders), there is nothing to do:
+    if len(files) == 0:
+        sys.stdout.write('No input for the map process found.\n')
+        sys.exit(1)
 
-# If there is at least one file (or folder), create a MapExecutor:
-executor = MapExecutor()
+    # If there is at least one file (or folder), create a MapExecutor:
+    executor = MapExecutor()
 
-# Create the commands for the input files:
-commands = executor.buildCommands(files)
+    # Create the commands for the input files:
+    commands = executor.buildCommands(files)
 
-# Finally, the commands are executed sequentially:
-if args.verbose:
-    print 'Executing commands...'
-executor.runCommands(commands)
+    # Finally, the commands are executed sequentially:
+    if args.verbose:
+        print 'Executing commands...'
+    executor.runCommands(commands)
