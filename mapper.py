@@ -175,8 +175,16 @@ class MapExecutor(object):
         This is an internal method that removes the escape characters
         preceding the placeholders defined in MapConstants.py.
         """
-        return inputString.replace('\\','')
-        
+         # Turn the inputString into a list:
+        inputStringAsList = list(inputString)
+        # Get the indices of backspaces ('\x08') in the list:
+        indices = [index.start() for index in re.finditer('\x08', inputString)]
+        # Replace at the indices, unless the subsequent character is a space:
+        for index in indices:
+            if index == len(inputStringAsList)-1 or inputStringAsList[index+1] != ' ':
+                inputStringAsList[index] = ''
+        # Put the pieces together again and return the string:
+        return ''.join(inputStringAsList)
 
     def buildPart(self,commandPart,fileNameWithPath,count,args):
         """
