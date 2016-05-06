@@ -1,5 +1,7 @@
 mv data/1.txt data/1-10.txt
 mv data/2.txt data/2-11.txt
-mv data/anothersubfolder/5.txt data/anothersubfolder/5-12.txt
-mv data/subfolder/6.txt data/subfolder/6-13.txt
-mv data/subfolder/subsubfolder/8.txt data/subfolder/subsubfolder/8-14.txt
+mv data/_-##%.txt data/_-##%-12.txt
+mv data/_-.txt data/_--13.txt
+mv data/anothersubfolder/5.txt data/anothersubfolder/5-14.txt
+mv data/subfolder/6.txt data/subfolder/6-15.txt
+mv data/subfolder/subsubfolder/8.txt data/subfolder/subsubfolder/8-16.txt
