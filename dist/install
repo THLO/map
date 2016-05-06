@@ -1,0 +1,4 @@
+tar xzf map-*.tar.gz
+cd map-*
+sudo python setup.py install
+cd ..
