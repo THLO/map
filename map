@@ -1,2 +1,16 @@
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-$DIR/map.py "$@"
+#!/usr/bin/env python
+
+"""
+map is a script that simply starts the map process
+by invoking map() on a MapStarter object.
+
+Usage information is shown by running: ./map --help
+
+More information is available at https://github.com/THLO/map.
+"""
+
+import sys
+from mapper import MapStarter
+
+mapp_starter = MapStarter()
+mapp_starter.map()
