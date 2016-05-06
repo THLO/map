@@ -119,4 +119,6 @@ map [command] /path/to/folder/* /path/to/anotherfolder/*
 
 ## Installation
 
-Currently, `map` can only be cloned from GitHub.
+Download the content of the `dist` folder.
+You can verify the integrity of the tarball by running `md5sum` and comparing against the hash in `MD5_CHECKSUMS`.
+Next, install `map` by simply invoking the installation script `install`. Note that the installation requires super user rights. 
