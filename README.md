@@ -18,14 +18,14 @@ The `[command]` can contain several placeholders that are substituted with the a
 
 * `_` is used as the placeholder for the current file (or directory) including the full path.
 * `&` is used as the placeholder for the path to the current file.
-* `-` is used as the placeholder for the current file's name without its path or extension.
+* `:` is used as the placeholder for the current file's name without its path or extension.
 * `#` is used as the placeholder for the current file's extension including `.`.
 * `%` is used to refer to an internal counter, incremented after each command.
 
 For example, if the current file is `path/to/file/filename.ext` and this is the `9th` file that is being processed, then
 * `_` is replaced by `path/to/file/filename.ext`.
 * `&` is replaced by `path/to/file/`.
-* `-` is replaced by `filename`.
+* `:` is replaced by `filename`.
 * `#` is replaced by `.ext`.
 * `%` is replaced by `8`.
 
@@ -77,11 +77,12 @@ map -rd "mv _ &/.." ~/Documents
 Recursively move all directories under `Documents` up one level.
 
 ```
-map -n 3 "mv _ &-\-%#" ~/Documents/*.txt
+map -n 3 "mv _ &:-%#" ~/Documents/*.txt
 ```
 Add a counter with three digits to the file names of all `txt` files, i.e,
 `a.txt`, `b.txt` are renamed to `a-000.txt`, `b-001.txt` etc.
-Note that `\` is the escape character for all placeholders, i.e., in order to write a regular underscore (`_`), write `\_`. The same principle applies to `-`, `&`, `#`, and `%`.
+
+Note that `\` is the escape character for all placeholders, i.e., in order to write a regular underscore (`_`), write `\_`. The same principle applies to `:`, `&`, `#`, and `%`.
 
 ## Important Notes
 

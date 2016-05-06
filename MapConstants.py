@@ -5,7 +5,7 @@ Information about map is available at https://github.com/THLO/map.
 """
 
 placeholder = '_'
-placeholderFileName = '-'
+placeholderFileName = ':'
 placeholderPath = '&'
 placeholderExtension = '#'
 placeholderCounter = '%'
