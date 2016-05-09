@@ -1,6 +1,6 @@
 """
-MapARgumentParser extends the standard ArgumentParser for map.py.
-It defines all arguments for map.py.
+MapARgumentParser extends the standard ArgumentParser for map.
+It defines all arguments for map.
 
 Information about map is available at https://github.com/THLO/map.
 """
@@ -22,8 +22,11 @@ placeholders:\n  \
 "+MapConstants.placeholderExtension+" is used as the placeholder for the current file's extension including the dot.\n  \
 "+MapConstants.placeholderCounterHelpVersion+" is used to refer to an internal counter,\
 incremented after each command.\n\n\
-examples:\n  map \"mv _ &-%#\" /path/to/folder: A counter is added to all file names.\n" \
-"  map -r \"mv _ &/..\" /path/to/folder: Each file is moved to its respective parent directory.",formatter_class=argparse.RawDescriptionHelpFormatter)
+examples:\n  map \"mv " + MapConstants.placeholder + " " + MapConstants.placeholderPath +
+MapConstants.placeholderFileName + MapConstants.placeholderCounterHelpVersion + MapConstants.placeholderExtension +
+"\" /path/to/folder: A counter is added to all file names.\n" \
+"  map -r \"mv "+MapConstants.placeholder + " " + MapConstants.placeholderPath + "/..\" /path/to/folder: \
+Each file is moved to its respective parent directory.",formatter_class=argparse.RawDescriptionHelpFormatter)
         # Get the version information:
         info = loadVersionInfo()
 	version = info['__version__']
@@ -41,14 +44,15 @@ examples:\n  map \"mv _ &-%#\" /path/to/folder: A counter is added to all file n
         self.add_argument("-r", "--recursive", action="store_true",help="search for files recursively under the provided path.")
         self.add_argument("-v", "--verbose", action="store_true", help="display detailed information about the process.")
         self.add_argument("-V",'--version', action='version', version='map '+version+'\n'+versionText,help="display information about the installed version.")
-        group.add_argument("-x", "--extensions", help="apply the command to all files with any of the listed extensions. The extensions must be provided in a comma-separated list. By default, the command is \
+        group.add_argument("-x", "--extensions", help="apply the command to all files with any of the listed extensions.\
+ The extensions must be provided in a comma-separated list. By default, the command is \
 applied to all files under the provided path.")
         self.add_argument("command", help="The command that is applied to all matching files/directories.")
         self.add_argument("path",nargs='*', help="The (top-level) path where matching files are sought.")
 
     def format_help(self):
         """ The help statement is slightly changed in that the '.py' extension is dropped. """
-	return super(MapArgumentParser,self).format_help().replace('.py','').replace('%%','%').replace('COUNT_FROM','VALUE').replace('NUMBER_LENGTH','LENGTH').replace('EXTENSIONS','EXT')
+	return super(MapArgumentParser,self).format_help().replace('%%','%').replace('COUNT_FROM','VALUE').replace('NUMBER_LENGTH','LENGTH').replace('EXTENSIONS','EXT')
 
 def checkNegative(value):
     errorMessage = "%s is invalid because only non-negative integers are allowed." % value
