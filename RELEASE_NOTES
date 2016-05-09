@@ -1,0 +1,19 @@
+*********************
+*** RELEASE NOTES ***
+*********************
+
+map v.1.0.0
+-----------
+Released: May 6, 2016
+Notes: First release of map. All features planned for the initial release are imlemented, which includes the following options:
+
+-h: Print the help text
+-c: Count starting from the given integer
+-d: Process directories instead of files
+-i: Ignore errors during command execution
+-l: List commands instead of executing them
+-n: Format the numbers using a specific number of digits
+-r: Find files to process recursively
+-v: Run in verbose mode
+-V: Print version information
+-x: Filter for the given extensions
