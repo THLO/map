@@ -1,5 +1,5 @@
 """
-MapConstants defines constants used by map.py.
+MapConstants defines constants used by map.
 
 Information about map is available at https://github.com/THLO/map.
 """

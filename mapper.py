@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 """
-mapper applies a given command to all files (or directories) under a certain path.
+mapper is a module to apply a given command to all files (or directories) under a certain path.
 
 Usage information is shown by running: ./mapper.py --help
+
+mapper can be invoked directly or via map, which simply invokes this module.
 
 More information is available at https://github.com/THLO/map.
 """
