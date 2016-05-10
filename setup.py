@@ -6,7 +6,7 @@ except ImportError:
 import os
 
 def getVersion():
-    with open('version.py') as f: exec(f.read())
+    with open(os.path.join(os.path.dirname(__file__),'version.py')) as f: exec(f.read())
     return __version__
 
 setup(name = "map",
