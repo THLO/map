@@ -11,14 +11,16 @@ def getVersion():
 
 setup(name = "map",
     version = getVersion(),
-    description = "map is a utility that applies a given command to all \
-files/folders under a certain path.",
+    description = "map applies a command to files/folders at a certain path.",
     author = "Thomas Locher",
     author_email = "thamasta@gmx.ch",
     url = "https://github.com/THLO/map",
     py_modules = ['mapper','MapArgumentParser','MapConstants','version'],
     scripts = ["map"],
-    long_description = open('README.md').read(),
+    long_description = "The same functionality to apply a command to multiple files/folders\n\
+can be achieved using for loops or find -exec or similar tools.\n\
+The advantage of map is that it is easier and more convenient to use.\n\
+More information on map can be found at https://github.com/THLO/map or by running map --help.",
     license = 'GNU General Public License v3 (GPLv3)',
     platforms = 'POSIX',
     classifiers = [
