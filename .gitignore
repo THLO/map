@@ -6,3 +6,4 @@ MANIFEST
 dist/map-1.0.0/
 TODO
 map.egg-info/
+deb_dist/
