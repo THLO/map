@@ -1,0 +1,39 @@
+*********************
+*** Build Scripts ***
+*********************
+
+The following scripts facilitat the build process.
+
+NOTE: The scripts SHOULD be run from the root of the project, i.e.,
+they should be run as follows:
+
+./scripts/build_tar
+./scripts/build_deb
+./scripts/build_signed_deb
+./scripts/submit_to_launchpad
+
+build_tar
+---------
+
+This script builds the tarball in the folder dist.
+The script dist/install can then be invoked to install it.
+
+build_deb
+---------
+
+This script builds the deb package in the folder deb_dist.
+It can be installed by calling dpkg -i [package name].deb.
+
+build_signed_deb
+----------------
+
+PREREQUISITE: build_deb MUST have been executed before.
+This script extracts the files from the deb, changes some
+meta information, signs the data, and builds the signed
+package.
+
+submit_to_launchpad
+-------------------
+
+PREREQUISITE: build_signed_deb MUST have been executed before.
+This script uploads the newly built package for distribution via Launchpad.

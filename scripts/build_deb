@@ -1,0 +1,20 @@
+# *************************
+# *** Build deb Package *** 
+# *************************
+
+# 1) In order to build a deb package, the following packages
+# must be installed:
+
+# sudo apt-get install python-stdeb fakeroot python-all
+
+# 2) Update stdeb.cfg with the correct ubuntu release, e.g.,
+
+# Suite: xenial
+
+# 3) Build the deb and dsc file in the folder deb_dist:
+
+# Get the directory where the script is stored:
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+python $DIR/../setup.py --command-packages=stdeb.command bdist_deb
