@@ -9,7 +9,7 @@
 
 # 2) Update stdeb.cfg with the correct ubuntu release, e.g.,
 
-# Suite: xenial
+# Suite: precise
 
 # 3) Build the deb and dsc file in the folder deb_dist:
 

@@ -17,7 +17,7 @@ cd map-1.0.0
 cp ../../LICENSE debian/copyright
 
 # Change the version to a Ubuntu compatible version:
-sed -i '0,/-1/s//-0ubuntu1~$0/' debian/changelog 
+sed -i '0,/-1/s//-0ubuntu1/' debian/changelog 
 
 # Change the name of the binary from python-map to map:
 sed -i 's/python-map/map/g' debian/control
