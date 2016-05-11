@@ -115,13 +115,14 @@ class MapInputHandler(object):
             # This allows the processing of subfolders before the processing of the parent folder.
             # Processing the parent folder first may not work because the command may remove
             # or rename the folder, which would affect the subfolders.
-            fileList = [element for element in fileList if os.path.isdir(element)]
+            fileList = ['\"' + element + '\"' for element in fileList if os.path.isdir(element)]
             return sorted(fileList,reverse=True)
         else:
             # The files in the list are sorted in lexicographical order:
             fileList = [element for element in fileList if os.path.isfile(element)]
 	    if args.extensions != None:    # Files are filtered based on their extensions:
                 fileList = [element for element in fileList if self.matchesExtension(element,args.extensions)]
+            fileList = ['\"' + element + '\"' for element in fileList]
             return sorted(fileList)
 
 class MapExecutor(object):
@@ -174,19 +175,9 @@ class MapExecutor(object):
 
     def unescapePlaceholders(self,inputString):
         """
-        This is an internal method that removes the escape characters
-        preceding the placeholders defined in MapConstants.py.
+        This is an internal method that removes the escape characters.
         """
-         # Turn the inputString into a list:
-        inputStringAsList = list(inputString)
-        # Get the indices of backspaces ('\x08') in the list:
-        indices = [index.start() for index in re.finditer('\x08', inputString)]
-        # Replace at the indices, unless the subsequent character is a space:
-        for index in indices:
-            if index == len(inputStringAsList)-1 or inputStringAsList[index+1] != ' ':
-                inputStringAsList[index] = ''
-        # Put the pieces together again and return the string:
-        return ''.join(inputStringAsList)
+        return inputString.replace('\\','')
 
     def buildPart(self,commandPart,fileNameWithPath,count,args):
         """
@@ -201,7 +192,7 @@ class MapExecutor(object):
         # Get the file name without the path:
         fileNameWithoutPath = os.path.basename(fileNameWithPath)
         # Get the file name without the path and without the extension:
-        plainFileName = os.path.splitext(fileNameWithoutPath)[0].replace(' ','\\ ')
+        plainFileName = os.path.splitext(fileNameWithoutPath)[0]
         # Get the extension:
         fileExtension = os.path.splitext(fileNameWithoutPath)[1]
         
@@ -219,17 +210,14 @@ class MapExecutor(object):
         else:
             replacementString = ('{0:0'+str(args.number_length)+'d}').format(count)
         commandPart = self.replaceInCommand(commandPart,MapConstants.placeholderCounter,replacementString,replacementString)
-        # Remove the escape characters before returning the command part:
-        return self.unescapePlaceholders(commandPart)
+        return commandPart
 
     def buildCommand(self,fileName,count,args):
         """
         This is an internal method, building the command for a particular file.
         """
-        # Escape spaces in file paths:
-        fileNameWithPath = fileName.replace(' ','\\ ')
         # Escape all placeholders in the file path:
-	fileNameWithPath = self.escapePlaceholders(fileNameWithPath)
+	fileNameWithPath = self.escapePlaceholders(fileName)
 
         # The command is split into 'parts', which are separated by blank spaces:
         commandParts = args.command.split(' ')
@@ -238,7 +226,7 @@ class MapExecutor(object):
         for part in commandParts:
             processedParts.append(self.buildPart(part,fileNameWithPath,count,args))
         # The parts are put together at the end and the new command is returned:
-        return ' '.join(processedParts)
+        return self.unescapePlaceholders(' '.join(processedParts))
 
     def buildCommands(self,files,args):
         """
