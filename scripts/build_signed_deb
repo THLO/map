@@ -10,8 +10,8 @@ cd signed_deb
 
 # Unpack the sources and navigate to the unpacked folder:
 
-dpkg-source -x ../deb_dist/map_1.0.0-1.dsc
-cd map-1.0.0
+dpkg-source -x ../deb_dist/map_1.1.0-1.dsc
+cd map-1.1.0
 
 # Copy over the license file because debian requires it:
 cp ../../LICENSE debian/copyright

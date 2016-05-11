@@ -6,7 +6,7 @@
 cd signed_deb
 
 # Upload the package to Launchpad to the provided PPA:
-dput ppa:thamasta/thlo-utils map_1.0.0-0ubuntu1_source.changes
+dput ppa:thamasta/thlo-utils map_1.1.0-0ubuntu1_source.changes
 
 # Navigate back to the original folder:
 cd ../..
