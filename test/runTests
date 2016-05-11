@@ -9,39 +9,39 @@ NUM_ERRORS=0
 
 # The basic operation with one or more directories is tested: 
 echo "Running basic operation tests..."
-../mapper.py -l _ data/ > output/test1
-../mapper.py -l _ data/* > output/test2
-../mapper.py -l _ data/*txt > output/test3
-../mapper.py -l _ data/subfolder/*abc data/anothersubfolder/*txt > output/test4
-../mapper.py -l _ data/ data/ > output/test5
-../mapper.py -l _ data/* data/* > output/test6
+../map "ls _" data/ > output/test1
+../map "ls _" data/* > output/test2
+../map "ls _" data/*txt > output/test3
+../map "ls _" data/subfolder/*abc data/anothersubfolder/*txt > output/test4
+../map "ls _" data/ data/ > output/test5
+../map "ls _" data/* data/* > output/test6
 
 # The same type of operation with recursion is tested:
 echo "Running basic operation tests with recursion..."
-../mapper.py -lr _ data/*txt > output/test7
-../mapper.py -lr _ data/*mat > output/test8
-../mapper.py -lr _ data/*txt data/anothersubfolder data/subfolder/*abc > output/test9
-../mapper.py -lr _ data/*jpg data/*txt data/*abc > output/test10
+../map -r "ls _" data/*txt > output/test7
+../map -r "ls _" data/*mat > output/test8
+../map -r "ls _" data/*txt data/anothersubfolder data/subfolder/*abc > output/test9
+../map -r "ls _" data/*jpg data/*txt data/*abc > output/test10
 
 # Operations with folders instead of files are tested:
 echo "Running tests with folders..."
-../mapper.py -ld "mv _ _/../.." data/ > output/test11
-../mapper.py -ldr "mv _ _/../.." data/ > output/test12
-../mapper.py -ld "mv _ _\_%" data/ > output/test13
-../mapper.py -ldr "mv _ _\_%" data/ > output/test14
+../map -ld "mv _ _/../.." data/ > output/test11
+../map -ldr "mv _ _/../.." data/ > output/test12
+../map -ld "mv _ _\_%" data/ > output/test13
+../map -ldr "mv _ _\_%" data/ > output/test14
 
 # The different placeholders are tested:
 echo "Running tests with placeholders..."
-../mapper.py -l "mv _ &-\-%#" data/ > output/test15
-../mapper.py -l "mv _ ~/_" data/ > output/test16
+../map -l "command -option\:a _ -output\:b &:-%#" data/ > output/test15
+../map -l "command -p\:\_ -p2\:\% -p3\:\# _ " data/ > output/test16
 
 # The different options are tested:
 echo "Running tests with different options..."
-../mapper.py -lr -c 10 -n 2  "mv _ &-\-%#" data/ > output/test17
-../mapper.py -lr -c 10 -n 2 -x abc "mv _ &-\-%#" data/ > output/test18
-../mapper.py -lr -c 10 -n 2 -x abc "mv _ &-\-%#" data/*txt > output/test19
-../mapper.py -lr -c 10 -n 2 -x abc,txt "mv _ &-\-%#" data/*txt > output/test20
-../mapper.py -lr -c 10 -n 2 -x abc,txt "mv _ &-\-%#" data/ > output/test21
+../map -lr -c 10 -n 2  "mv _ &:-%#" data/ > output/test17
+../map -lr -c 10 -n 2 -x abc "mv _ &:-%#" data/ > output/test18
+../map -lr -c 10 -n 2 -x abc "mv _ &:-%#" data/*txt > output/test19
+../map -lr -c 10 -n 2 -x abc,txt "mv _ &:-%#" data/*txt > output/test20
+../map -lr -c 10 -n 2 -x abc,txt "mv _ &:-%#" data/ > output/test21
 
 echo "All tests have been executed."
 

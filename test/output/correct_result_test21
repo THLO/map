@@ -1,9 +1,10 @@
-mv data/1.txt data/-\-10.txt
-mv data/2.txt data/-\-11.txt
-mv data/3.abc data/-\-12.abc
-mv data/\_-\#\ \#\%.txt data/-\-13.txt
-mv data/\_\:.txt data/-\-14.txt
-mv data/anothersubfolder/5.txt data/anothersubfolder/-\-15.txt
-mv data/subfolder/6.txt data/subfolder/-\-16.txt
-mv data/subfolder/7.abc data/subfolder/-\-17.abc
-mv data/subfolder/subsubfolder/8.txt data/subfolder/subsubfolder/-\-18.txt
+mv "data/% ('+|_ : ).txt" "data/% ('+|_ : )-10.txt"
+mv "data/1.txt" "data/1-11.txt"
+mv "data/2.txt" "data/2-12.txt"
+mv "data/3.abc" "data/3-13.abc"
+mv "data/_-# #%.txt" "data/_-# #%-14.txt"
+mv "data/_:.txt" "data/_:-15.txt"
+mv "data/anothersubfolder/5.txt" "data/anothersubfolder/5-16.txt"
+mv "data/subfolder/6.txt" "data/subfolder/6-17.txt"
+mv "data/subfolder/7.abc" "data/subfolder/7-18.abc"
+mv "data/subfolder/subsubfolder/8.txt" "data/subfolder/subsubfolder/8-19.txt"

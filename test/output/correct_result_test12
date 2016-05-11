@@ -1,3 +1,3 @@
-mv data/subfolder/subsubfolder data/subfolder/subsubfolder/../..
-mv data/subfolder data/subfolder/../..
-mv data/anothersubfolder data/anothersubfolder/../..
+mv "data/subfolder/subsubfolder" "data/subfolder/subsubfolder"/../..
+mv "data/subfolder" "data/subfolder"/../..
+mv "data/anothersubfolder" "data/anothersubfolder"/../..

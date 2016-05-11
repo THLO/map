@@ -1,2 +1,2 @@
-mv data/subfolder data/subfolder\_0
-mv data/anothersubfolder data/anothersubfolder\_1
+mv "data/subfolder" "data/subfolder"_0
+mv "data/anothersubfolder" "data/anothersubfolder"_1

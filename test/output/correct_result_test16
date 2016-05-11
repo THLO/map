@@ -1,5 +1,6 @@
-mv data/1.txt ~/1.txt
-mv data/2.txt ~/2.txt
-mv data/3.abc ~/3.abc
-mv data/\_-\#\ \#\%.txt ~/\_-\#\ \#\%.txt
-mv data/\_\:.txt ~/\_\:.txt
+command -p:_ -p2:% -p3:# "data/% ('+|_ : ).txt" 
+command -p:_ -p2:% -p3:# "data/1.txt" 
+command -p:_ -p2:% -p3:# "data/2.txt" 
+command -p:_ -p2:% -p3:# "data/3.abc" 
+command -p:_ -p2:% -p3:# "data/_-# #%.txt" 
+command -p:_ -p2:% -p3:# "data/_:.txt" 

@@ -1,5 +1,6 @@
-mv data/1.txt data/-\-0.txt
-mv data/2.txt data/-\-1.txt
-mv data/3.abc data/-\-2.abc
-mv data/\_-\#\ \#\%.txt data/-\-3.txt
-mv data/\_\:.txt data/-\-4.txt
+command -option:a "data/% ('+|_ : ).txt" -output:b "data/% ('+|_ : )-0.txt"
+command -option:a "data/1.txt" -output:b "data/1-1.txt"
+command -option:a "data/2.txt" -output:b "data/2-2.txt"
+command -option:a "data/3.abc" -output:b "data/3-3.abc"
+command -option:a "data/_-# #%.txt" -output:b "data/_-# #%-4.txt"
+command -option:a "data/_:.txt" -output:b "data/_:-5.txt"
