@@ -17,3 +17,11 @@ Notes: First release of map. All features planned for the initial release are im
 -v: Run in verbose mode
 -V: Print version information
 -x: Filter for the given extensions
+
+map v.1.1.0
+-----------
+Released: May 11, 2016
+Notes: This is a bug fix release. In particular, it fixes the following issues:
+- Special characters in input files/folders are now handled correctly.
+- Special characters in the command are now handled correctly.
+No new functionality has been added.
