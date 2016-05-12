@@ -143,5 +143,8 @@ dpkg -i map_[version number].deb
 
 3) On any system with a working python installation, you can install `map`
 by downloading `map-[verson number].tar.gz` and `install_tar` in the folder `dist`.
-You can verify the integrity of the tarball by downloading `MD5_CHECKSUMS`, running `md5sum` and comparing the computed hash against the hash in `MD5_CHECKSUMS`.
-Next, install `map` by simply invoking the installation script `install_tar`. Note that the installation requires super user rights. 
+You can verify the integrity of the tarball by downloading `MD5_CHECKSUMS`, running `md5sum`, and comparing the computed hash against the hash in `MD5_CHECKSUMS`.
+
+Next, install `map` by simply invoking the installation script `install_tar`.
+
+Note that the installation requires super user rights. 
