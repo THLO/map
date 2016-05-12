@@ -146,5 +146,4 @@ by downloading `map-[verson number].tar.gz` and `install_tar` in the folder `dis
 You can verify the integrity of the tarball by downloading `MD5_CHECKSUMS`, running `md5sum`, and comparing the computed hash against the hash in `MD5_CHECKSUMS`.
 
 Next, install `map` by simply invoking the installation script `install_tar`.
-
 Note that the installation requires super user rights. 
