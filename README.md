@@ -119,6 +119,29 @@ map [command] /path/to/folder/* /path/to/anotherfolder/*
 
 ## Installation
 
-Download the content of the `dist` folder.
-You can verify the integrity of the tarball by running `md5sum` and comparing the computed hash against the hash in `MD5_CHECKSUMS`.
-Next, install `map` by simply invoking the installation script `install`. Note that the installation requires super user rights. 
+There are multiple installation options.
+
+1) If you are running Ubuntu, you can install `map` by first adding the `PPA` as follows:
+
+```
+sudo add-apt-repository ppa:thamasta/thlo-utils
+```
+
+Next, run `sudo apt-get update` followed by
+
+```
+sudo apt-get install map
+```
+
+2) If you are running any operating system that uses `deb` packages,
+download the file `map_[version number].deb` in the folder `dist`
+and then run
+
+```
+dpkg -i map_[version number].deb
+```
+
+3) On any system with a working python installation, you can install `map`
+by downloading `map-[verson number].tar.gz` and `install_tar` in the folder `dist`.
+You can verify the integrity of the tarball by downloading `MD5_CHECKSUMS`, running `md5sum` and comparing the computed hash against the hash in `MD5_CHECKSUMS`.
+Next, install `map` by simply invoking the installation script `install_tar`. Note that the installation requires super user rights. 
