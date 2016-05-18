@@ -146,4 +146,10 @@ by downloading `map-[verson number].tar.gz` and `install_tar` in the folder `dis
 You can verify the integrity of the tarball by downloading `MD5_CHECKSUMS`, running `md5sum`, and comparing the computed hash against the hash in `MD5_CHECKSUMS`.
 
 Next, install `map` by simply invoking the installation script `install_tar`.
-Note that the installation requires super user rights. 
+Note that the installation requires super user rights.
+
+### Old Releases
+
+You can download tarballs of old releases by navigating to the website
+`https://github.com/THLO/map/tarball/[version number]`, where `[version number]` must be replaced by the desired version. The format is `v.X.Y.Z`, e.g., `v.1.0.0`.
+Note that these tarballs contain the entire project and therefore the hashes will not match the MD5 checksums in the file `MD5_CHECKSUMS` under `dist`.
