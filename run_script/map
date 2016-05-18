@@ -9,7 +9,6 @@ Usage information is shown by running: ./map --help
 More information is available at https://github.com/THLO/map.
 """
 
-import sys
 from mapper import MapStarter
 
 mapp_starter = MapStarter()

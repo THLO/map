@@ -4,7 +4,7 @@ This is the version file for the map project.
 More information about map is available at https://github.com/THLO/map.
 """
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 __version_text__ = 'Copyright (C) 2016 Thomas Locher\n\
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\

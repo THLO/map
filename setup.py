@@ -6,7 +6,7 @@ except ImportError:
 import os
 
 def getVersion():
-    with open(os.path.join(os.path.dirname(__file__),'version.py')) as f: exec(f.read())
+    with open(os.path.join(os.path.dirname(__file__),'map/version.py')) as f: exec(f.read())
     return __version__
 
 setup(name = "map",
@@ -15,8 +15,8 @@ setup(name = "map",
     author = "Thomas Locher",
     author_email = "thamasta@gmx.ch",
     url = "https://github.com/THLO/map",
-    py_modules = ['mapper','MapArgumentParser','MapConstants','version'],
-    scripts = ["map"],
+    packages = ['map'],
+    scripts = ['run_script/map'],
     long_description = "The same functionality to apply a command to multiple files/folders\n\
 can be achieved using for loops or find -exec or similar tools.\n\
 The advantage of map is that it is easier and more convenient to use.\n\

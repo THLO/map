@@ -68,19 +68,7 @@ def checkNegative(value):
     return intvalue
 
 def loadVersionInfo():
-    directory = os.path.dirname(__file__) +"/"
+    directory = os.path.dirname(__file__)
     ns = {}
-    with open(directory+'version.py') as f: exec(f.read(),ns)
-    #print ns__version__
-    #print __version_text__
+    with open(os.path.join(directory,'version.py')) as f: exec(f.read(),ns)
     return ns    
-
-def loadVersion():
-    directory = os.path.dirname(__file__) +"/"
-    with open(directory+'version.py') as f: exec(f.read())
-    print __version__
-
-def getVersionText():
-    directory = os.path.dirname(__file__) +"/"
-    with open(directory+'version.py') as f: exec(f.read())
-    return __version__
