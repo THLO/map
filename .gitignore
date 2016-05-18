@@ -8,3 +8,7 @@ TODO
 map.egg-info/
 deb_dist/
 signed_deb/
+build/
+dist/*.egg
+installed_files.txt
+run
