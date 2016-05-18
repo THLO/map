@@ -1,4 +1,4 @@
 tar xzf map-*.tar.gz
 cd map-*
-sudo python setup.py install
+sudo python setup.py install --record installed_files.txt
 cd ..
