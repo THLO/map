@@ -1,4 +1,11 @@
+# This script installs the tarball and also generates
+# a file "installed_files.txt" containing all the
+# files that were created in the process. This file is
+# used when uninstalling the tarball again using
+# uninstall_tar.
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+cd $DIR/..
 tar xzf map-*.tar.gz
 cd map-*
-sudo python setup.py install --record installed_files.txt
+sudo python setup.py install --record $DIR/installed_files.txt
 cd ..

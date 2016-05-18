@@ -1,0 +1,4 @@
+# This script uninstalls the tarball when it was
+# installed using the stcript install_tar:
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+cat $DIR/installed_files.txt | xargs rm -rf 
