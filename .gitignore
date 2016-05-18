@@ -9,5 +9,5 @@ map.egg-info/
 deb_dist/
 signed_deb/
 build/
-dist/*.egg
+dist/
 installed_files.txt
