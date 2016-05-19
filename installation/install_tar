@@ -3,9 +3,24 @@
 # files that were created in the process. This file is
 # used when uninstalling the tarball again using
 # uninstall_tar.
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-cd $DIR/..
-tar xzf map-*.tar.gz
-cd map-*
-sudo python setup.py install --record $DIR/installed_files.txt
-cd ..
+# install_tar requires one parameter, which is the
+# version number to be installed.
+
+# Fail on first error:
+set -e
+
+if [[ $# -eq 1 ]]
+then
+	OLD_DIR=$(pwd)
+	DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+	cd $DIR
+	tar xzf map-$1.tar.gz
+	cd map-$1
+	sudo python setup.py install --record $DIR/installed_files.txt
+	cd ..
+	sudo rm -r map-$1	
+	cd $OLD_DIR
+else
+	echo "Usage: install_tar [version number]"
+	echo "Example: install_tar 1.2.0"
+fi

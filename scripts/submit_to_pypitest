@@ -2,9 +2,15 @@
 # *** Submit to PyPI Test *** 
 # ***************************
 
+# Fail on first error:
+set -e
+
+# Get the directory where this script is stored:
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+
 # Register map against PyPI's test server:
 echo "Registering map..."
-python setup.py register -r pypitest
+python $DIR/../setup.py register -r pypitest
 
 # Wait a moment:
 echo "Waiting a moment before uploading..."
@@ -12,5 +18,5 @@ sleep(10)
 
 # Upload map to PyPI's test server: 
 echo "Uploading map..."
-python setup.py sdist upload -r pypitest
+python $DIR/../setup.py sdist upload -r pypitest
 echo "Done."

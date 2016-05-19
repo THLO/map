@@ -2,31 +2,47 @@
 # *** Build Signed deb Package *** 
 # ********************************
 
-# Since stdeb cannot sign packages itself, we must unpack 
-# in a temporary folder 'signed_deb':
+# The required parameter is the targeted version number:
 
-mkdir signed_deb 
-cd signed_deb
+# Fail on first error:
+set -e
 
-# Unpack the sources and navigate to the unpacked folder:
+if [[ $# -eq 1 ]]
+then
+	# First, we move to the right directory:
+	OLD_DIR=$(pwd)
+	DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+	cd $DIR/..
+ 
+	# Since stdeb cannot sign packages itself, we must unpack 
+	# in a temporary folder 'signed_deb':
 
-dpkg-source -x ../deb_dist/map_1.1.0-1.dsc
-cd map-1.1.0
+	mkdir signed_deb 
+	cd signed_deb
 
-# Copy over the license file because debian requires it:
-cp ../../LICENSE debian/copyright
+	# Unpack the sources and navigate to the unpacked folder:
 
-# Change the version to a Ubuntu compatible version:
-sed -i '0,/-1/s//-0ubuntu1/' debian/changelog 
+	dpkg-source -x ../deb_dist/map_$1-1.dsc
+	cd map-$1
 
-# Change the name of the binary from python-map to map:
-sed -i 's/python-map/map/g' debian/control
+	# Copy over the license file because debian requires it:
+	cp ../../LICENSE debian/copyright
 
-# Change the version to the latest to remove the lintian warning:
-sed -i '/Standards-Version/c\Standards-Version: 3.9.3' debian/control
+	# Change the version to a Ubuntu compatible version:
+	sed -i '0,/-1/s//-0ubuntu1/' debian/changelog 
 
-# Build the new signed package:
-debuild -S -sa
+	# Change the name of the binary from python-map to map:
+	sed -i 's/python-map/map/g' debian/control
 
-# Navigate back to the original folder:
-cd ../..
+	# Change the version to the latest to remove the lintian warning:
+	sed -i '/Standards-Version/c\Standards-Version: 3.9.3' debian/control
+
+	# Build the new signed package:
+	debuild -S -sa
+
+	# Navigate back to the original folder:
+	cd $OLD_DIR
+else
+        echo "Usage: build_signed_deb [version number]"
+        echo "Example: build_signed_deb 1.2.0"
+fi

@@ -2,6 +2,9 @@
 # *** Build deb Package *** 
 # *************************
 
+# Fail on first error:
+set -e
+
 # 1) In order to build a deb package, the following packages
 # must be installed:
 
@@ -11,10 +14,10 @@
 
 # Suite: precise
 
-# 3) Build the deb and dsc file in the folder deb_dist:
-
 # Get the directory where the script is stored:
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# 3) Build the deb and dsc file in the folder deb_dist:
 
 python $DIR/../setup.py --command-packages=stdeb.command bdist_deb

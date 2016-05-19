@@ -2,4 +2,11 @@
 # *** Build tarball Package *** 
 # *****************************
 
-python setup.py sdist
+# Fail on first error:
+set -e
+
+# Get the directory where the script is stored:
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Build the tarball:
+python $DIR/../setup.py sdist

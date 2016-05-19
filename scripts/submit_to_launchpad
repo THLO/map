@@ -2,11 +2,24 @@
 # *** Submit to Launchpad  *** 
 # ****************************
 
-# Move to the signed_deb folder:
-cd signed_deb
+# The required parameter is the targeted version number:
 
-# Upload the package to Launchpad to the provided PPA:
-dput ppa:thamasta/thlo-utils map_1.1.0-0ubuntu1_source.changes
+# Fail on first error:
+set -e
 
-# Navigate back to the original folder:
-cd ../..
+if [[ $# -eq 1 ]]
+then
+	# First, we move to the right directory:
+    OLD_DIR=$(pwd)
+    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+	cd $DIR/signed_deb
+
+	# Upload the package to Launchpad to the provided PPA:
+	dput ppa:thamasta/thlo-utils map_$1-0ubuntu1_source.changes
+
+	# Navigate back to the original folder:
+	cd $OLD_DIR
+else
+        echo "Usage: submit_to_launchpad [version number]"
+        echo "Example: submit_to_launchpad 1.2.0"
+fi
