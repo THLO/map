@@ -15,6 +15,7 @@ setup(name = "map",
     author = "Thomas Locher",
     author_email = "thamasta@gmx.ch",
     url = "https://github.com/THLO/map",
+    download_url = "https://github.com/THLO/map/tarball/v.1.1.0",
     packages = ['map'],
     scripts = ['map/map'],
     long_description = "The same functionality to apply a command to multiple files/folders\n\
