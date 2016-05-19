@@ -34,6 +34,9 @@ class MapInputHandler(object):
         table[directory] == 'ext' means that only content with the extension 'ext' are mapped
         table[directory] == 'ext1,ext2' means that only content with either extension 'ext1'
                             or 'ext2' are mapped
+
+        Note that there is a special symbol MapConstants.placeholderNoExtensionFilter
+        that enables the filtering for files without an extension.
         """
         table = {}
         for element in args.path:
@@ -86,18 +89,24 @@ class MapInputHandler(object):
             resultList = args.path
         return list(set(resultList))
 
-    def matchesExtension(self,inputData, extensions):
+    def getExtensionList(self,extensions):
         """
-        This is an internal method that checks whether the given input data has an accepted extension.
+        This is an internal method that transforms the comma-separated extensions string
+        into a list of extensions, e.g., "ext1,ext2,ext3" gets turned into ['.ext1','.ext2','.ext3'].
+        If MapConstants.placeholderNoExtensionFilter is part of the string, the resulting list
+        will also contain '', i.e., files without extensions are permitted.
         """
-        extensionList = extensions.split(',')
-        extensionListWithDot = []
-        for ext in extensionList:
-            # The '.' is prepended if ext does not start with '.' already:
-            next = ext if ext.startswith('.') else '.'+ext
-            extensionListWithDot.append(next)
-        # Check if the extension of inputData is in the list of extensions:
-        return os.path.splitext(inputData)[1] in extensionListWithDot
+        basicList = extensions.split(',')
+        extensionList = []
+        for ext in basicList:
+            if ext == '' or ext == MapConstants.placeholderNoExtensionFilter:
+                # Files without an extension are permitted:
+                extensionList.append('')
+            else:
+                # The '.' is prepended if ext does not start with '.' already:
+                extWithDot = ext if ext.startswith('.') else '.'+ext
+                extensionList.append(extWithDot)
+        return list(set(extensionList))
 
     def getFiles(self,args):
         """
@@ -121,7 +130,8 @@ class MapInputHandler(object):
             # The files in the list are sorted in lexicographical order:
             fileList = [element for element in fileList if os.path.isfile(element)]
 	    if args.extensions != None:    # Files are filtered based on their extensions:
-                fileList = [element for element in fileList if self.matchesExtension(element,args.extensions)]
+                extensionList = self.getExtensionList(args.extensions)
+                fileList = [element for element in fileList if os.path.splitext(element)[1] in extensionList]
             fileList = ['\"' + element + '\"' for element in fileList]
             return sorted(fileList)
 

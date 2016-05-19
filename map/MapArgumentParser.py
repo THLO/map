@@ -46,7 +46,8 @@ Each file is moved to its respective parent directory.",formatter_class=argparse
         self.add_argument("-V",'--version', action='version', version='map '+version+'\n'+versionText,help="display information about the installed version.")
         groupXD.add_argument("-x", "--extensions", help="apply the command to all files with any of the listed extensions.\
  The extensions must be provided in a comma-separated list. By default, the command is \
-applied to all files under the provided path.")
+applied to all files under the provided path. The symbol '"+MapConstants.placeholderNoExtensionFilter+"' is used to\
+ filter for files without an extension.")
         self.add_argument("command", help="The command that is applied to all matching files/directories.")
         self.add_argument("path",nargs='*', help="The (top-level) path where matching files are sought.")
 
