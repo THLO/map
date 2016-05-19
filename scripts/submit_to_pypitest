@@ -1,0 +1,16 @@
+# ***************************
+# *** Submit to PyPI Test *** 
+# ***************************
+
+# Register map against PyPI's test server:
+echo "Registering map..."
+python setup.py register -r pypitest
+
+# Wait a moment:
+echo "Waiting a moment before uploading..."
+sleep(10)
+
+# Upload map to PyPI's test server: 
+echo "Uploading map..."
+python setup.py sdist upload -r pypitest
+echo "Done."

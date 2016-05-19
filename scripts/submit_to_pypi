@@ -1,0 +1,16 @@
+# **********************
+# *** Submit to PyPI *** 
+# **********************
+
+# Register map against PyPI's server:
+echo "Registering map..."
+python setup.py register -r pypi
+
+# Wait a moment:
+echo "Waiting a moment before uploading..."
+sleep(10)
+
+# Upload map to PyPI's server: 
+echo "Uploading map..."
+python setup.py sdist upload -r pypi
+echo "Done."
