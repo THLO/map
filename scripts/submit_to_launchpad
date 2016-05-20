@@ -2,24 +2,19 @@
 # *** Submit to Launchpad  *** 
 # ****************************
 
-# The required parameter is the targeted version number:
-
 # Fail on first error:
 set -e
 
-if [[ $# -eq 1 ]]
-then
-	# First, we move to the right directory:
-    OLD_DIR=$(pwd)
-    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-	cd $DIR/signed_deb
+# First, we move to the root directory of map:
+OLD_DIR=$(pwd)
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+cd $DIR/signed_deb
 
-	# Upload the package to Launchpad to the provided PPA:
-	dput ppa:thamasta/thlo-utils map_$1-0ubuntu1_source.changes
+# Then, we get the version out of version.py:
+VERSION=$(grep "__version__" map/version.py | cut -d'"' -f2)
 
-	# Navigate back to the original folder:
-	cd $OLD_DIR
-else
-        echo "Usage: submit_to_launchpad [version number]"
-        echo "Example: submit_to_launchpad 1.2.0"
-fi
+# Upload the package to Launchpad to the provided PPA:
+dput ppa:thamasta/thlo-utils map_$VERSION-0ubuntu1_source.changes
+
+# Navigate back to the original folder:
+cd $OLD_DIR
