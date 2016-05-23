@@ -1,6 +1,5 @@
 *.pyc
-*.py~
-*.md~
+*~
 test/output/test*
 MANIFEST
 dist/map-1.0.0/
