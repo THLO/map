@@ -69,11 +69,12 @@ class MapInputHandler(object):
         resultList = []
         dirDict = self.getDirectoryDictionary(args)
         for key in dirDict:
-            for path,dirs,files in os.walk(key):    # Walk through the directory to find all input
+            for path,dirs,files in os.walk(key):    # Walk through the directory to find al	l input
                 for d in dirs:
                     resultList.append(os.path.join(path,d))
                 for f in files:    # Append the file if 'ALL' are allowed or the extension is allowed
-                        if dirDict[key] == 'ALL' or os.path.splitext(f)[1] in dirDict[key]:
+                        pattern = dirDict[key].split(',')
+                        if 'ALL' in pattern or os.path.splitext(f)[1] in pattern:
                             resultList.append(os.path.join(path,f))
         return list(set(resultList))
 
@@ -99,10 +100,10 @@ class MapInputHandler(object):
         basicList = extensions.split(',')
         extensionList = []
         for ext in basicList:
-            if ext == '' or ext == MapConstants.placeholderNoExtensionFilter:
+            if ext == MapConstants.placeholderNoExtensionFilter:
                 # Files without an extension are permitted:
                 extensionList.append('')
-            else:
+            elif ext != '':
                 # The '.' is prepended if ext does not start with '.' already:
                 extWithDot = ext if ext.startswith('.') else '.'+ext
                 extensionList.append(extWithDot)
@@ -124,15 +125,15 @@ class MapInputHandler(object):
             # This allows the processing of subfolders before the processing of the parent folder.
             # Processing the parent folder first may not work because the command may remove
             # or rename the folder, which would affect the subfolders.
-            fileList = ['\"' + element + '\"' for element in fileList if os.path.isdir(element)]
+            fileList = [element for element in fileList if os.path.isdir(element)]
             return sorted(fileList,reverse=True)
         else:
-            # The files in the list are sorted in lexicographical order:
+            # Filter out all directories:
             fileList = [element for element in fileList if os.path.isfile(element)]
 	    if args.extensions != None:    # Files are filtered based on their extensions:
                 extensionList = self.getExtensionList(args.extensions)
                 fileList = [element for element in fileList if os.path.splitext(element)[1] in extensionList]
-            fileList = ['\"' + element + '\"' for element in fileList]
+            # The files in the list are sorted in lexicographical order:
             return sorted(fileList)
 
 class MapExecutor(object):
@@ -206,6 +207,9 @@ class MapExecutor(object):
         # Get the extension:
         fileExtension = os.path.splitext(fileNameWithoutPath)[1]
         
+        # The original command part is retained:
+        originalCommandPart = commandPart
+
         # Replace the file placeholder character with the file:
         commandPart = self.replaceInCommand(commandPart,MapConstants.placeholder,fileNameWithoutPath,fileNameWithPath)
         # Replace the path placeholder with the path:
@@ -220,6 +224,9 @@ class MapExecutor(object):
         else:
             replacementString = ('{0:0'+str(args.number_length)+'d}').format(count)
         commandPart = self.replaceInCommand(commandPart,MapConstants.placeholderCounter,replacementString,replacementString)
+        # If the command part changed, it is put in quotes to avoid problems with special characters:
+        if originalCommandPart != commandPart:
+            commandPart = '\"' + commandPart + '\"'
         return commandPart
 
     def buildCommand(self,fileName,count,args):
