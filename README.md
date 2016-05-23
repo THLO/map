@@ -120,6 +120,7 @@ map [command] /path/to/folder/* /path/to/anotherfolder/*
 ## Installation
 
 There are multiple installation options.
+The first two options are preferable because they offer a simple update mechanisms.
 
 1) If you are running Ubuntu, you can install `map` by first adding the `PPA` as follows:
 
@@ -133,20 +134,28 @@ Next, run `sudo apt-get update` followed by
 sudo apt-get install map
 ```
 
-2) If you are running any operating system that uses `deb` packages,
-download the file `map_[version number].deb` in the folder `dist`
+2) If you have `Python` installed, `map` can be downloaded from [PyPI](https://pypi.python.org/) using `pip` as follows:
+```
+sudo pip install map
+```
+Note that running the same command with `-U` appended updates `map` to the latest version.
+
+It is also possible to install `map` manually, as the following options show.
+
+3) If you are running any operating system that uses `deb` packages, download the file `map_[version number].deb` in the folder `dist`
 and then run
 
 ```
 dpkg -i map_[version number].deb
 ```
 
-3) On any system with a working python installation, you can install `map`
+4) If you have `Python` installed, you can install `map`
 by downloading `map-[verson number].tar.gz` and `install_tar` in the folder `dist`.
 You can verify the integrity of the tarball by downloading `MD5_CHECKSUMS`, running `md5sum`, and comparing the computed hash against the hash in `MD5_CHECKSUMS`.
 
 Next, install `map` by simply invoking the installation script `install_tar`.
 Note that the installation requires super user rights.
+In order to remove `map`, simply download `uninstall_tar` and run it.
 
 ### Old Releases
 
