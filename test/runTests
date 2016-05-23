@@ -4,44 +4,60 @@
 # would be executed.
 
 # Global parameters:
-NUM_TESTS=21
+NUM_TESTS=27
 NUM_ERRORS=0
+
+# Store the current directory and switch to test directory:
+OLD_DIR=$(pwd)
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
+echo "Current dir: $DIR"
 
 # The basic operation with one or more directories is tested: 
 echo "Running basic operation tests..."
-../map/map "ls _" data/ > output/test1
-../map/map "ls _" data/* > output/test2
-../map/map "ls _" data/*txt > output/test3
-../map/map "ls _" data/subfolder/*abc data/anothersubfolder/*txt > output/test4
-../map/map "ls _" data/ data/ > output/test5
-../map/map "ls _" data/* data/* > output/test6
+../map/mapper.py "ls _" data/ > output/test1
+../map/mapper.py "ls _" data/* > output/test2
+../map/mapper.py "ls _" data/*txt > output/test3
+../map/mapper.py "ls _" data/subfolder/*abc data/anothersubfolder/*txt > output/test4
+../map/mapper.py "ls _" data/ data/ > output/test5
+../map/mapper.py "ls _" data/* data/* > output/test6
 
 # The same type of operation with recursion is tested:
 echo "Running basic operation tests with recursion..."
-../map/map -r "ls _" data/*txt > output/test7
-../map/map -r "ls _" data/*mat > output/test8
-../map/map -r "ls _" data/*txt data/anothersubfolder data/subfolder/*abc > output/test9
-../map/map -r "ls _" data/*jpg data/*txt data/*abc > output/test10
+../map/mapper.py -r "ls _" data/*txt > output/test7
+../map/mapper.py -r "ls _" data/*mat > output/test8
+../map/mapper.py -r "ls _" data/*txt data/anothersubfolder data/subfolder/*abc > output/test9
+../map/mapper.py -r "ls _" data/*jpg data/*txt data/*abc > output/test10
 
 # Operations with folders instead of files are tested:
 echo "Running tests with folders..."
-../map/map -ld "mv _ _/../.." data/ > output/test11
-../map/map -ldr "mv _ _/../.." data/ > output/test12
-../map/map -ld "mv _ _\_%" data/ > output/test13
-../map/map -ldr "mv _ _\_%" data/ > output/test14
+../map/mapper.py -ld "mv _ _/../.." data/ > output/test11
+../map/mapper.py -ldr "mv _ _/../.." data/ > output/test12
+../map/mapper.py -ld "mv _ _\_%" data/ > output/test13
+../map/mapper.py -ldr "mv _ _\_%" data/ > output/test14
 
 # The different placeholders are tested:
 echo "Running tests with placeholders..."
-../map/map -l "command -option\:a _ -output\:b &:-%#" data/ > output/test15
-../map/map -l "command -p\:\_ -p2\:\% -p3\:\# _ " data/ > output/test16
+../map/mapper.py -l "command -option\:a _ -output\:b &:-%#" data/ > output/test15
+../map/mapper.py -l "command -p\:\_ -p2\:\% -p3\:\# _ " data/ > output/test16
 
 # The different options are tested:
 echo "Running tests with different options..."
-../map/map -lr -c 10 -n 2  "mv _ &:-%#" data/ > output/test17
-../map/map -lr -c 10 -n 2 -x abc "mv _ &:-%#" data/ > output/test18
-../map/map -lr -c 10 -n 2 -x abc "mv _ &:-%#" data/*txt > output/test19
-../map/map -lr -c 10 -n 2 -x abc,txt "mv _ &:-%#" data/*txt > output/test20
-../map/map -lr -c 10 -n 2 -x abc,txt "mv _ &:-%#" data/ > output/test21
+../map/mapper.py -lr -c 10 -n 2  "mv _ &:-%#" data/ > output/test17
+../map/mapper.py -lr -c 10 -n 2 -x abc "mv _ &:-%#" data/ > output/test18
+../map/mapper.py -lr -c 10 -n 2 -x abc "mv _ &:-%#" data/*txt > output/test19
+../map/mapper.py -lr -c 10 -n 2 -x abc,txt "mv _ &:-%#" data/*txt > output/test20
+../map/mapper.py -lr -c 10 -n 2 -x abc,txt "mv _ &:-%#" data/ > output/test21
+
+# Wildcards together with different input folders are tested:
+../map/mapper.py "ls _" data/*abc data/anothersubfolder/* > output/test22
+../map/mapper.py -r "ls _" data/*abc data/anothersubfolder/* > output/test23
+
+# Files with special extensions are tested:
+../map/mapper.py -x . "ls _" data/ > output/test24
+../map/mapper.py -r -x . "ls _" data/ > output/test25
+../map/mapper.py -x ^ "ls _" data/ > output/test26
+../map/mapper.py -r -x ^ "ls _" data/ > output/test27
 
 echo "All tests have been executed."
 
@@ -56,13 +72,17 @@ for i in `seq 1 $NUM_TESTS`; do
 		echo "*** Test $i failed ***"
 		echo "**********************"
 		echo "Expected output:"
+		echo "----------------"
 		cat output/correct_result_test$i
+		printf "\n"
 		echo "Test output:"
+		echo "------------"
 		cat output/test$i
 		NUM_ERRORS=$((NUM_ERRORS+1))
 	fi
 done
 
+printf "\n"
 echo "Testing complete."
 if [ "$NUM_ERRORS" -eq 1 ]
 then
@@ -70,3 +90,6 @@ then
 else
 	echo "There were $NUM_ERRORS errors."
 fi
+
+# Switch back to the initial directory:
+cd $OLD_DIR
