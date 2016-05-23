@@ -18,6 +18,15 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# 3) Build the deb and dsc file in the folder deb_dist:
+# Get the current directory:
+OLD_DIR=$(pwd)
 
-python $DIR/../setup.py --command-packages=stdeb.command bdist_deb
+# 3) Change to the main directory:
+cd $DIR/..
+ 
+# 4) Build the deb and dsc file in the folder deb_dist:
+
+python setup.py --command-packages=stdeb.command bdist_deb
+
+# 5) Return to the original directory:
+cd $OLD_DIR

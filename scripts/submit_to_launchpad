@@ -5,13 +5,17 @@
 # Fail on first error:
 set -e
 
-# First, we move to the root directory of map:
+# Get a pointer to the current directory:
 OLD_DIR=$(pwd)
+
+# Get the directory where this script is stored:
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+
+# Move to the directory where the signed debian package is stored:
 cd $DIR/signed_deb
 
 # Then, we get the version out of version.py:
-VERSION=$(grep "__version__" map/version.py | cut -d'"' -f2)
+VERSION=$(grep "__version__" ../map/version.py | cut -d'"' -f2)
 
 # Upload the package to Launchpad to the provided PPA:
 dput ppa:thamasta/thlo-utils map_$VERSION-0ubuntu1_source.changes

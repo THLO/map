@@ -34,7 +34,7 @@ sed -i '0,/-1/s//-0ubuntu1/' debian/changelog
 sed -i 's/python-map/map/g' debian/control
 
 # Change the version to the latest to remove the lintian warning:
-sed -i '/Standards-Version/c\Standards-Version: 3.9.3' debian/control
+sed -i '/Standards-Version/c\Standards-Version: 3.9.5' debian/control
 
 # Build the new signed package:
 debuild -S -sa
