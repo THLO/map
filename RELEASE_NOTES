@@ -2,8 +2,8 @@
 *** RELEASE NOTES ***
 *********************
 
-map v.1.0.0
------------
+map 1.0.0
+---------
 Released: May 9, 2016
 Notes: First release of map. All features planned for the initial release are imlemented, which includes the following options:
 
@@ -18,10 +18,21 @@ Notes: First release of map. All features planned for the initial release are im
 -V: Print version information
 -x: Filter for the given extensions
 
-map v.1.1.0
------------
+map 1.1.0
+---------
 Released: May 11, 2016
 Notes: This is a bug fix release. In particular, it fixes the following issues:
 - Special characters in input files/folders are now handled correctly.
 - Special characters in the command are now handled correctly.
 No new functionality has been added.
+
+map 1.2.0
+---------
+Released May 23, 2016
+Notes: This is a bug fix and restructuring release. The main changes are the following:
+- The key components are now located in a package called 'map'.
+- There is now support for files without an extension:
+    --extensions ^
+  maps all files without an extension.
+- A bug was fixed that caused the wrong list of files to be mapped when specifying
+  multiple input folders, each with a different file filter.
