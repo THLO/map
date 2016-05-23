@@ -5,8 +5,16 @@
 # Fail on first error:
 set -e
 
+# Store a pointer to the current directory:
+OLD_DIR=$(pwd)
 # Get the directory where the script is stored:
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Change to the directory where the map package is:
+cd $DIR/..
+
 # Build the tarball:
-python $DIR/../setup.py sdist
+python setup.py sdist
+
+# Go back to the original directory:
+cd $OLD_DIR
