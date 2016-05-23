@@ -5,8 +5,14 @@
 # Fail on first error:
 set -e
 
+# Get the current directory:
+OLD_DIR=$(pwd)
+
 # Get the directory where this script is stored:
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+
+# Change to the root directory of the map project:
+cd $DIR/..
 
 # Register map against PyPI's server:
 echo "Registering map..."
@@ -14,9 +20,12 @@ python $DIR/../setup.py register -r pypi
 
 # Wait a moment:
 echo "Waiting a moment before uploading..."
-sleep(10)
+sleep 10
 
 # Upload map to PyPI's server: 
 echo "Uploading map..."
 python $DIR/../setup.py sdist upload -r pypi
+
+# Change back to the original directory:
+cd $OLD_DIR
 echo "Done."
