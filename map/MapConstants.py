@@ -24,4 +24,4 @@ escape_char = '\\'
 # The following placeholder is used to filter for files without
 # extensions:
 
-placeholderNoExtensionFilter = '^' 
+placeholderNoExtensionFilter = '^'
