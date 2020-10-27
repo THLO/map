@@ -11,7 +11,7 @@ The basic usage is straightforward:
 map [command] [path [path ...]]
 ```
 `[command]` can be any shell command, but it must be in quotation marks.
-`[path [path ...]]` is a path, or multiple plaths, where the input files (or directories) are found for the shell command.
+`[path [path ...]]` is a path, or multiple paths, where the input files (or directories) are found for the shell command.
 Wildcards (`*`) are allowed in the path(s).
 
 The `[command]` can contain several placeholders that are substituted with the actual values before executing the command:
@@ -61,7 +61,7 @@ map "mv _ /new/path/_" /old/path/
 ```
 Move all the files under `/old/path/` to `/new/path/`.
 Note that `map` is smart enough to drop the path when `_` is used as part of a path, i.e.,
-`/new/path/_` is equivalent `/new/path/-#` (concatenation of the file name and the extension).
+`/new/path/_` is equivalent to `/new/path/-#` (concatenation of the file name and the extension).
 
 
 ```
