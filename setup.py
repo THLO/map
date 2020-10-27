@@ -2,11 +2,12 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
- 
+
 import os
 
 def getVersion():
-    with open(os.path.join(os.path.dirname(__file__),'map/version.py')) as f: exec(f.read())
+    with open(os.path.join(os.path.dirname(__file__),'map/version.py')) as f:
+        exec(f.read(), globals())
     return __version__
 
 setup(name = "map",
@@ -34,4 +35,4 @@ More information on map can be found at https://github.com/THLO/map or by runnin
         'Programming Language :: Python',
         'Topic :: Desktop Environment',
       ]
-) 
+)
