@@ -142,7 +142,7 @@ Note that running the same command with `-U` appended updates `map` to the lates
 
 It is also possible to install `map` manually, as the following options show.
 
-3) If you are running any operating system that uses `deb` packages, download the file `map_[version number].deb` in the folder `dist`
+3) If you are running any operating system that uses `deb` packages, download the file `map_[version number].deb` in the folder `installation`
 and then run
 
 ```
@@ -150,7 +150,7 @@ dpkg -i map_[version number].deb
 ```
 
 4) If you have `Python` installed, you can install `map`
-by downloading `map-[verson number].tar.gz` and `install_tar` in the folder `dist`.
+by downloading `map-[verson number].tar.gz` and `install_tar` in the folder `installation`.
 You can verify the integrity of the tarball by downloading `MD5_CHECKSUMS`, running `md5sum`, and comparing the computed hash against the hash in `MD5_CHECKSUMS`.
 
 Next, install `map` by simply invoking the installation script `install_tar`.
@@ -161,4 +161,4 @@ In order to remove `map`, simply download `uninstall_tar` and run it.
 
 You can download tarballs of old releases by navigating to the website
 `https://github.com/THLO/map/tarball/[version number]`, where `[version number]` must be replaced by the desired version. The format is `v.X.Y.Z`, e.g., `v.1.0.0`.
-Note that these tarballs contain the entire project and therefore the hashes will not match the MD5 checksums in the file `MD5_CHECKSUMS` under `dist`.
+Note that these tarballs contain the entire project and therefore the hashes will not match the MD5 checksums in the file `MD5_CHECKSUMS` under `installation`.
