@@ -36,3 +36,11 @@ Notes: This is a bug fix and restructuring release. The main changes are the fol
   maps all files without an extension.
 - A bug was fixed that caused the wrong list of files to be mapped when specifying
   multiple input folders, each with a different file filter.
+
+map 1.3.0
+---------
+Released October 30, 2020
+Notes: This is a restructuring release. The main changes are the following:
+- The module MapConstants.py is renamed to map_constants.py.
+- The module MapArgumentParser.py is renamed to map_argument_parser.py.
+- The code in all modules has been cleaned up and polished.
