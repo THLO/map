@@ -10,13 +10,13 @@ mapper can be invoked directly or via map, which simply invokes this module.
 More information is available at https://github.com/THLO/map.
 """
 
+from __future__ import print_function
 import os
 import sys
-import argparse
 import subprocess
 import re
-from MapArgumentParser import MapArgumentParser
-import MapConstants
+from map.map_argument_parser import MapArgumentParser
+from map import map_constants as mc
 
 
 class MapInputHandler(object):
@@ -29,123 +29,152 @@ class MapInputHandler(object):
     which creates and returns a list of the input files (or directories).
     """
 
-    def getDirectoryDictionary(self, args):
+    def get_directory_dictionary(self, args):
         """
-        This is an internal method to compute a dictionary containing
+        This function computes a dictionary containing
         all the directories that potentially contain (more) input.
-        The dictionary 'table' indicates which of its contents are part of the input:
+        The returned dictionary 'table' indicates which of its contents are
+        part of the input as follows:
 
         table[directory] == 'ALL' means that its entire content must be mapped
-        table[directory] == 'ext' means that only content with the extension 'ext' are mapped
-        table[directory] == 'ext1,ext2' means that only content with either extension 'ext1'
-                            or 'ext2' are mapped
+        table[directory] == 'ext' means that only content with the extension
+            'ext' are mapped
+        table[directory] == 'ext1,ext2' means that only content with either
+            extension 'ext1' or 'ext2' are mapped
 
-        Note that there is a special symbol MapConstants.placeholderNoExtensionFilter
+        Note that there is a special symbol
+        map_constants.PLACEHOLDER_NO_EXTENSION_FILTER
         that enables the filtering for files without an extension.
+        @param args: The parsed map arguments
+        @return: A dictionary specifying what elements to map per directory
         """
         table = {}
         for element in args.path:
-            # If the element is a directory, the dictionary entry is set to 'ALL':
+            # If the element is a directory, the dictionary entry is set
+            # to 'ALL':
             if os.path.isdir(element):
                 if element not in table:
                     table[element] = 'ALL'
-            # If the element is a file, its extension is added to the dictionary entry:
+            # If the element is a file, its extension is added to the
+            # dictionary entry:
             else:
                 path = os.path.dirname(element)
                 extension = os.path.splitext(element)[1]
-                # If there is no extension, a '.' was missing. This happens when calling:
+                # If there is no extension, a '.' was missing.
+                # This happens when calling:
                 # map -r [command] path/to/folder/*ext
-                # and the folder 'folder' DOES NOT contain files with the extension 'ext'.
-                # In this case, there is no wildcard expansion and we must create the
-                # proper extension manually:
+                # and the folder 'folder' DOES NOT contain files with
+                # the extension 'ext'.
+                # In this case, there is no wildcard expansion and we must
+                # create the proper extension manually:
                 if extension == '':
-                    extension = '.' + os.path.basename(element).split("*")[-1]
+                    extension = '.' + os.path.basename(element).split('*')[-1]
                 if path not in table:
                     table[path] = extension
                 elif table[path] != 'ALL' and extension not in table[path]:
                     table[path] = table[path] + "," + extension
         return table
 
-    def createListRecursively(self, args):
+    def create_list_recursively(self, args):
         """
-        This is an internal method to create the list of input files (or directories)
-        recursively, starting at the provided directory or directories.
+        This is an internal method to create the list of input files
+        (or directories) recursively, starting at the provided directory
+        or directories.
+        @param args: The parsed map arguments
+        @return: List of map input files of directories
         """
-        resultList = []
-        dirDict = self.getDirectoryDictionary(args)
-        for key in dirDict:
+        result_list = []
+        directory_dict = self.get_directory_dictionary(args)
+        for key in directory_dict:
             # Walk through the directory to find al	l input
-            for path, dirs, files in os.walk(key):
-                for d in dirs:
-                    resultList.append(os.path.join(path, d))
-                for f in files:    # Append the file if 'ALL' are allowed or the extension is allowed
-                    pattern = dirDict[key].split(',')
-                    if 'ALL' in pattern or os.path.splitext(f)[1] in pattern:
-                        resultList.append(os.path.join(path, f))
-        return list(set(resultList))
+            for path, directories, files in os.walk(key):
+                for directory in directories:
+                    result_list.append(os.path.join(path, directory))
+                # Append the file if every file or the file's extension is
+                # allowed to be mapped:
+                for filename in files:
+                    pattern = directory_dict[key].split(',')
+                    if 'ALL' in pattern or \
+                       os.path.splitext(filename)[1] in pattern:
+                        result_list.append(os.path.join(path, filename))
+        return list(set(result_list))
 
-    def createList(self, args):
+    def create_list(self, args):
         """
-        This is an internal method to create the list of input files (or directories)
-        contained in the provided directory or directories.
+        This is an internal method to create the list of input files
+        (or directories) contained in the provided directory or directories.
+        @param args: The parsed map arguments
+        @return: List of map input files of directories
         """
-        resultList = []
+        result_list = []
         if len(args.path) == 1 and os.path.isdir(args.path[0]):
-            resultList = [os.path.join(args.path[0], f)
-                          for f in os.listdir(args.path[0])]
-        else:    # If there are multiple items, wildcard expansion has already created the list of files
-            resultList = args.path
-        return list(set(resultList))
+            result_list = [os.path.join(args.path[0], f)
+                           for f in os.listdir(args.path[0])]
+        else:
+            # If there are multiple items, wildcard expansion has already
+            # created the list of files.
+            result_list = args.path
+        return list(set(result_list))
 
-    def getExtensionList(self, extensions):
+    def get_extension_list(self, extensions):
         """
-        This is an internal method that transforms the comma-separated extensions string
-        into a list of extensions, e.g., "ext1,ext2,ext3" gets turned into ['.ext1','.ext2','.ext3'].
-        If MapConstants.placeholderNoExtensionFilter is part of the string, the resulting list
-        will also contain '', i.e., files without extensions are permitted.
+        This is an internal method that transforms the comma-separated
+        extensions string into a list of extensions, e.g., "ext1,ext2,ext3"
+        gets turned into ['.ext1','.ext2','.ext3'].
+        If map_constants.PLACEHOLDER_NO_EXTENSION_FILTER is part of the string,
+        the resulting list will also contain '', i.e., files without extensions
+        are permitted.
+        @param args: The parsed map arguments
+        @return: List of extensions
         """
-        basicList = extensions.split(',')
-        extensionList = []
-        for ext in basicList:
-            if ext == MapConstants.placeholderNoExtensionFilter:
+        basic_list = extensions.split(',')
+        extension_list = []
+        for ext in basic_list:
+            if ext == mc.PLACEHOLDER_NO_EXTENSION_FILTER:
                 # Files without an extension are permitted:
-                extensionList.append('')
+                extension_list.append('')
             elif ext != '':
                 # The '.' is prepended if ext does not start with '.' already:
-                extWithDot = ext if ext.startswith('.') else '.'+ext
-                extensionList.append(extWithDot)
-        return list(set(extensionList))
+                ext_with_dot = ext if ext.startswith('.') else '.'+ext
+                extension_list.append(ext_with_dot)
+        return list(set(extension_list))
 
-    def getFiles(self, args):
+    def get_files(self, args):
         """
         This is the main method of the class. Given the arguments,
-        the corresponding list of all files (or directories if the -d option is used)
-        are returned.
+        the corresponding list of all files (or directories if the '-d'
+        argument is used) are returned.
+        @param args: The parsed map arguments
+        @return: List of files or directories
         """
-        fileList = []
+        file_list = []
         # The list is created by going through the folder(s) recursively:
         if args.recursive:
-            fileList = self.createListRecursively(args)
+            file_list = self.create_list_recursively(args)
         else:    # The list is created by going through the provided folder(s):
-            fileList = self.createList(args)
+            file_list = self.create_list(args)
         if args.directories:
             # If directories are returned, the list is sorted in reverse order.
-            # This allows the processing of subfolders before the processing of the parent folder.
-            # Processing the parent folder first may not work because the command may remove
-            # or rename the folder, which would affect the subfolders.
-            fileList = [
-                element for element in fileList if os.path.isdir(element)]
-            return sorted(fileList, reverse=True)
+            # This allows the processing of subfolders before the processing of
+            # the parent folder.
+            # Processing the parent folder first may not work because the
+            # command may remove or rename the folder, which would affect
+            # the subfolders.
+            file_list = \
+                [element for element in file_list if os.path.isdir(element)]
+            return sorted(file_list, reverse=True)
         else:
             # Filter out all directories:
-            fileList = [
-                element for element in fileList if os.path.isfile(element)]
-            if args.extensions != None:    # Files are filtered based on their extensions:
-                extensionList = self.getExtensionList(args.extensions)
-                fileList = [element for element in fileList if os.path.splitext(element)[
-                    1] in extensionList]
+            file_list = \
+                [element for element in file_list if os.path.isfile(element)]
+            # Files are filtered based on their extensions:
+            if args.extensions is not None:
+                extension_list = self.get_extension_list(args.extensions)
+                file_list = \
+                    [element for element in file_list if
+                     os.path.splitext(element)[1] in extension_list]
             # The files in the list are sorted in lexicographical order:
-            return sorted(fileList)
+            return sorted(file_list)
 
 
 class MapExecutor(object):
@@ -161,172 +190,207 @@ class MapExecutor(object):
         runCommands(commands)
     """
 
-    def replaceInCommand(self, command, pattern, replacement, replacementAtBeginning):
+    def replace_in_commmand(self, command, pattern, replacement,
+                            replacement_at_beginning):
         """
-        This is in internal method that replaces a certain 'pattern' in the
-        provided command with a 'replacement'.
+        This method replaces a certain 'pattern' in the provided command with a
+        'replacement'.
         A different replacement can be specified when the pattern occurs right
         at the beginning of the command.
+        @param command: The command
+        @param pattern: The pattern
+        @param replacement: The replacement for the pattern
+        @param replacement_at_beginning: The replacement at the beginning
+        @return: The updated command
         """
         # Turn the command into a list:
-        commandAsList = list(command)
+        command_list = list(command)
         # Get the indices of the pattern in the list:
         indices = [index.start() for index in re.finditer(pattern, command)]
         # Replace at the indices, unless the preceding character is the
         # escape character:
         for index in indices:
             if index == 0:
-                commandAsList[index] = replacementAtBeginning
-            elif commandAsList[index-1] != MapConstants.escape_char:
-                commandAsList[index] = replacement
+                command_list[index] = replacement_at_beginning
+            elif command_list[index-1] != mc.ESCAPE_CHARACTER:
+                command_list[index] = replacement
         # Put the pieces of the new command together:
-        newCommand = ''.join(commandAsList)
+        new_command = ''.join(command_list)
         # Remove superfluous slashes and return:
-        return newCommand.replace("//", "/")
+        return new_command.replace("//", "/")
 
-    def escapePlaceholders(self, inputString):
+    def escape_placeholders(self, input_string):
         """
-        This is an internal method that escapes all the placeholders
-        defined in MapConstants.py.
+        This method escapes all the placeholders defined in map_constants.py.
+        @param input_string: The input string
+        @return: The input with escaped placeholders
         """
-        escaped = inputString.replace(
-            MapConstants.placeholder, '\\'+MapConstants.placeholder)
+        escape_char = mc.ESCAPE_CHARACTER
+        escaped = input_string.replace(
+            mc.PLACEHOLDER, escape_char + mc.PLACEHOLDER)
         escaped = escaped.replace(
-            MapConstants.placeholderFileName, '\\'+MapConstants.placeholderFileName)
+            mc.PLACEHOLDER_FILENAME, escape_char + mc.PLACEHOLDER_FILENAME)
         escaped = escaped.replace(
-            MapConstants.placeholderPath, '\\'+MapConstants.placeholderPath)
+            mc.PLACEHOLDER_PATH, escape_char + mc.PLACEHOLDER_PATH)
         escaped = escaped.replace(
-            MapConstants.placeholderExtension, '\\'+MapConstants.placeholderExtension)
+            mc.PLACEHOLDER_EXTENSION, escape_char + mc.PLACEHOLDER_EXTENSION)
         escaped = escaped.replace(
-            MapConstants.placeholderCounter, '\\'+MapConstants.placeholderCounter)
+            mc.PLACEHOLDER_COUNTER, escape_char + mc.PLACEHOLDER_COUNTER)
         return escaped
 
-    def unescapePlaceholders(self, inputString):
+    def unescape_placeholders(self, input_string):
         """
-        This is an internal method that removes the escape characters.
+        This method removes the escape characters.
+        @param input_string: The input string
+        @return: The input string without escape characters
         """
-        return inputString.replace('\\', '')
+        return input_string.replace(mc.ESCAPE_CHARACTER, '')
 
-    def buildPart(self, commandPart, fileNameWithPath, count, args):
+    def build_part(self, command_part, filename_with_path, count, args):
         """
-        This is in internal method that builds a part of the command,
-        see buildCommand().
+        This method builds a part of the command. It is used in the method
+        build_command().
+        @param command_part: Part of the command
+        @param filename_with_path: Filename with path
+        @param count: The current count
+        @param args: The parsed map arguments
+        @return: The built command part
         """
         # Get the path to the file:
-        filePath = os.path.split(fileNameWithPath)[0]
-        # Append '/' if there is a path, i.e., the file is not in the local directory:
-        if filePath != '':
-            filePath = filePath + '/'
+        file_path = os.path.split(filename_with_path)[0]
+        # Append '/' if there is a path, i.e., the file is not in the local
+        # directory:
+        if file_path != '':
+            file_path += '/'
         # Get the file name without the path:
-        fileNameWithoutPath = os.path.basename(fileNameWithPath)
+        filename_without_path = os.path.basename(filename_with_path)
         # Get the file name without the path and without the extension:
-        plainFileName = os.path.splitext(fileNameWithoutPath)[0]
+        plain_filename = os.path.splitext(filename_without_path)[0]
         # Get the extension:
-        fileExtension = os.path.splitext(fileNameWithoutPath)[1]
+        file_extension = os.path.splitext(filename_without_path)[1]
 
         # The original command part is retained:
-        originalCommandPart = commandPart
+        original_command_part = command_part
 
         # Replace the file placeholder character with the file:
-        commandPart = self.replaceInCommand(
-            commandPart, MapConstants.placeholder, fileNameWithoutPath, fileNameWithPath)
+        command_part = self.replace_in_commmand(
+            command_part, mc.PLACEHOLDER, filename_without_path,
+            filename_with_path)
         # Replace the path placeholder with the path:
-        commandPart = self.replaceInCommand(
-            commandPart, MapConstants.placeholderPath, filePath, filePath)
+        command_part = self.replace_in_commmand(
+            command_part, mc.PLACEHOLDER_PATH, file_path, file_path)
         # Replace the plain file placeholder with the plain file:
-        commandPart = self.replaceInCommand(
-            commandPart, MapConstants.placeholderFileName, plainFileName, plainFileName)
+        command_part = self.replace_in_commmand(
+            command_part, mc.PLACEHOLDER_FILENAME, plain_filename,
+            plain_filename)
         # Replace the extension placeholder with the extension:
-        commandPart = self.replaceInCommand(
-            commandPart, MapConstants.placeholderExtension, fileExtension, fileExtension)
+        command_part = self.replace_in_commmand(
+            command_part, mc.PLACEHOLDER_EXTENSION, file_extension,
+            file_extension)
         # Replace the placeholder for the counter with the actual count:
         if args.number_length == 0:
-            replacementString = str(count)
+            replacement_string = str(count)
         else:
-            replacementString = (
+            replacement_string = (
                 '{0:0'+str(args.number_length)+'d}').format(count)
-        commandPart = self.replaceInCommand(
-            commandPart, MapConstants.placeholderCounter, replacementString, replacementString)
-        # If the command part changed, it is put in quotes to avoid problems with special characters:
-        if originalCommandPart != commandPart:
-            commandPart = '\"' + commandPart + '\"'
-        return commandPart
+        command_part = self.replace_in_commmand(
+            command_part, mc.PLACEHOLDER_COUNTER, replacement_string,
+            replacement_string)
+        # If the command part changed, it is put in quotes to avoid problems
+        # with special characters:
+        if original_command_part != command_part:
+            command_part = '\"' + command_part + '\"'
+        return command_part
 
-    def buildCommand(self, fileName, count, args):
+    def build_command(self, filename, count, args):
         """
-        This is an internal method, building the command for a particular file.
+        This method builds the command for a particular file.
+        @param filename: The input filename
+        @param count: The current count
+        @param args: The parsed map arguments
+        @return: The built command
         """
         # Escape all placeholders in the file path:
-        fileNameWithPath = self.escapePlaceholders(fileName)
+        filename_with_path = self.escape_placeholders(filename)
 
-        # The command is split into 'parts', which are separated by blank spaces:
-        commandParts = args.command.split(' ')
-        processedParts = []
+        # The command is split into 'parts' separated by blank spaces:
+        command_parts = args.command.split(' ')
+        processed_parts = []
         # Each part of the command is processed separately:
-        for part in commandParts:
-            processedParts.append(self.buildPart(
-                part, fileNameWithPath, count, args))
-        # The parts are put together at the end and the new command is returned:
-        return self.unescapePlaceholders(' '.join(processedParts))
+        for part in command_parts:
+            processed_parts.append(self.build_part(
+                part, filename_with_path, count, args))
+        # The parts are put together and the new command is returned:
+        return self.unescape_placeholders(' '.join(processed_parts))
 
-    def buildCommands(self, files, args):
+    def build_commands(self, files, args):
         """
         Given a list of (input) files, buildCommands builds all the commands.
         This is one of the two key methods of MapExecutor.
+        @param files: The input files
+        @param args: The parsed map arguments
         """
         commands = []
         count = args.count_from
         # For each file, a command is created:
-        for fileName in files:
-            commands.append(self.buildCommand(fileName, count, args))
-            count = count+1
+        for filename in files:
+            commands.append(self.build_command(filename, count, args))
+            count += 1
         return commands
 
-    def runCommands(self, commands, args):
+    def run_commands(self, commands, args):
         """
-        Given a list of commands, runCommands executes them.
+        Given a list of commands, this method executes them.
         This is one of the two key methods of MapExecutor.
+        @param commands: The commands to be executed
+        @param args: The parsed map arguments
         """
-        errorCounter = 0
+        error_counter = 0
         if args.list:
-            print '\n'.join(commands)
+            print('\n'.join(commands))
         else:
             # Each command is executed sequentially:
             for command in commands:
                 process = subprocess.Popen(
-                    command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                    command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    shell=True)
                 stream = process.communicate()
                 output = stream[0]
-                erroroutput = stream[1]
-                returncode = process.returncode
+                error_output = stream[1]
+                return_code = process.returncode
                 if args.verbose:
-                    print 'Executing command: '+command
-                if returncode != 0:
-                    errorCounter = errorCounter + 1
+                    print('Executing command: '+command)
+                if return_code != 0:
+                    error_counter += 1
                     if args.verbose or not args.ignore_errors:
-                        print 'An error occurred:\n'
-                        print erroroutput
+                        print('An error occurred:\n')
+                        print(error_output)
                     if not args.ignore_errors:
                         print('Terminating map process.')
                         break
-                if returncode == 0 and len(output) > 0:
-                    sys.stdout.write(output)
+                if return_code == 0 and output:
+                    sys.stdout.write(output.decode('utf-8'))
         if args.verbose:
-            print 'Process completed successfully.'
-            if errorCounter > 0:
-                if errorCounter > 1:
-                    print str(errorCounter) + \
-                        ' errors occurred during the process.'
+            print('Process completed successfully.')
+            if error_counter > 0:
+                if error_counter > 1:
+                    print(str(error_counter)
+                          + ' errors occurred during the process.')
                 else:
-                    print str(errorCounter) + \
-                        ' error occurred during the process.'
-
-# ***** This code is executed when running mapper.py: *****
+                    print(str(error_counter)
+                          + ' error occurred during the process.')
 
 
 class MapStarter(object):
+    """ The MapStarter class is used to initiate the mapping process.
+    It uses a MapArgumentParser instance to parse the input, a
+    MapInputHandler to load the input that needs to be mapped, and then
+    uses a MapExecutor instance to process the input.
+    """
 
     def map(self):
+        """ The method starts the mapping process.
+        """
         # The argument parser is instantiated:
         parser = MapArgumentParser()
 
@@ -335,12 +399,12 @@ class MapStarter(object):
 
         # The target files (or folders) are collected for the map job:
         if args.verbose:
-            print 'Collecting input for the map process...'
-        inputHandler = MapInputHandler()
-        files = inputHandler.getFiles(args)
+            print('Collecting input for the map process...')
+        input_handler = MapInputHandler()
+        files = input_handler.get_files(args)
 
         # If there are no files (or folders), there is nothing to do:
-        if len(files) == 0:
+        if not files:
             sys.stdout.write('No input for the map process found.\n')
             sys.exit(1)
 
@@ -348,14 +412,16 @@ class MapStarter(object):
         executor = MapExecutor()
 
         # Create the commands for the input files:
-        commands = executor.buildCommands(files, args)
+        commands = executor.build_commands(files, args)
 
         # Finally, the commands are executed sequentially:
         if args.verbose:
-            print 'Executing commands...'
-        executor.runCommands(commands, args)
+            print('Executing commands...')
+        executor.run_commands(commands, args)
 
 
 if __name__ == "__main__":
-    mapper = MapStarter()
-    mapper.map()
+    # Create a MapStarter instance:
+    MAPPER = MapStarter()
+    # Start mapping:
+    MAPPER.map()
