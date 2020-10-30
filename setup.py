@@ -1,5 +1,5 @@
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
 
@@ -17,12 +17,13 @@ setup(name = "map",
     author_email = "thamasta@gmx.ch",
     url = "https://github.com/THLO/map",
     download_url = "https://github.com/THLO/map/tarball/v."+getVersion(),
-    packages = ['map'],
+    packages = find_packages(include=['map', 'map.*']),
     scripts = ['map/map'],
-    long_description = "The same functionality to apply a command to multiple files/folders\n\
-can be achieved using for loops or find -exec or similar tools.\n\
-The advantage of map is that it is easier and more convenient to use.\n\
-More information on map can be found at https://github.com/THLO/map or by running map --help.",
+    long_description = "The same functionality to apply a command to \
+    multiple files/folders\ncan be achieved using for loops or find -exec or \
+    similar tools.\nThe advantage of map is that it is easier and more \
+    convenient to use.\nMore information on map can be found at \
+    https://github.com/THLO/map or by running map --help.",
     license = 'GNU General Public License v3 (GPLv3)',
     platforms = 'POSIX',
     classifiers = [
